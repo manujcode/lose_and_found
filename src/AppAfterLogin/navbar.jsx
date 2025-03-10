@@ -136,10 +136,10 @@ const Navbar = ({page,setPage,user,setUser}) => {
                     </div>
                 </div>
 
-                {/* Mobile menu */}
+                {/* Mobile Navigation Menu */}
                 {mobileMenuOpen && (
-                    <div className="md:hidden bg-gray-800 shadow-lg">
-                        <div className="px-2 pt-2 pb-3 space-y-1">
+                    <div className="md:hidden">
+                        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                             {[
                                 { text: 'Home', onClick: () => setPage(0), active: page === 0 },
                                 { text: 'Found Items', onClick: () => setPage(1), active: page === 1 },

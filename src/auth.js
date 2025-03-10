@@ -2,10 +2,9 @@
 import { account, OAuthProvider } from './appwrite.js'
 
 const getRedirectUrl = (path = '') => {
-  const baseUrl = import.meta.env.PROD 
-    ? import.meta.env.VITE_APP_URL
-    : 'http://localhost:5173';
-  return `${baseUrl}${path}`;
+  // Get the current URL from the window object
+  const currentUrl = window.location.origin;
+  return `${currentUrl}${path}`;
 };
 
 export const loginWithGoogle = async () => {
@@ -17,8 +16,7 @@ export const loginWithGoogle = async () => {
     );
   } catch (error) {
     console.error("OAuth error:", error);
-    // You might want to handle the error more gracefully here
-    throw error; // Re-throw to handle it in the component
+    throw error;
   }
 };
 

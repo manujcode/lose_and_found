@@ -80,17 +80,17 @@ const Upload_find = () => {
   };
     
       return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-8 px-4 sm:py-12 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
             <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden">
-              <div className="px-6 py-8 sm:p-10">
-                <div className="text-center mb-8">
-                  <h2 className="text-3xl font-bold text-white mb-2">Report Found Item</h2>
-                  <p className="text-gray-300">Help return lost items to their owners</p>
+              <div className="px-4 py-6 sm:p-10">
+                <div className="text-center mb-6 sm:mb-8">
+                  <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">Report Found Item</h2>
+                  <p className="text-sm sm:text-base text-gray-300">Help others find their lost items</p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                     {[
                       { name: "name", label: "Your Name", type: "text" },
                       { name: "email", label: "Email Address", type: "email" },

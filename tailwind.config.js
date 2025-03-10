@@ -20,6 +20,13 @@ export default {
         'custom-dark': '0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3)',
         '3xl': '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
       },
+      screens: {
+        'xs': '475px',
+      },
+      spacing: {
+        '18': '4.5rem',
+        '22': '5.5rem',
+      },
     },
   },
   plugins: [],
