@@ -1,24 +1,16 @@
 // src/auth.js
 import { account, OAuthProvider } from './appwrite.js'
 
-const getRedirectUrl = (path = '') => {
-  // Get the current URL from the window object
-  const currentUrl = window.location.origin;
-  return `${currentUrl}${path}`;
-};
-
 export const loginWithGoogle = async () => {
   try {
-    await account.createOAuth2Session(
-      OAuthProvider.Google,
-      getRedirectUrl('/success'),
-      getRedirectUrl('/failed')
-    );
+    await account.createOAuth2Session(OAuthProvider.Google,
+        'http://localhost:5173/success',
+        'http://localhost:5173/failed'
+    )
   } catch (error) {
-    console.error("OAuth error:", error);
-    throw error;
+    console.error(error,"xxxxx")
   }
-};
+}
 
 export const logoutUser = async () => {
   try {
