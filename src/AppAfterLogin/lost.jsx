@@ -83,12 +83,7 @@ const Lost = () => {
                   </span>
                 </div>
 
-                <div className="mt-2">
-                  <p className="text-sm sm:text-base text-gray-600 mb-2">
-                    <span className="font-bold">Description: </span>
-                    <span className="line-clamp-2">{item.description}</span>
-                  </p>
-                </div>
+                
                 
                 <div className="mt-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
                   <span className="text-red-600 font-medium text-sm sm:text-base">
