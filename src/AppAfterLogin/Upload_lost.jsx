@@ -2,16 +2,17 @@ import React, { useState } from 'react'
 import { databases, storage } from '../appwrite'
 import {ID} from 'appwrite'
 
-const Upload_lost = () => {
+const Upload_lost = ({user}) => {
   const [formData, setFormData] = useState({
-      email: "",
-      name: "",
+      email: user.email,
+      name: user.name,
       phone: "",
       title: "",
       description: "",
       location: "",
       color: ""
     });
+    console.log(user,"in lost")
 
     const [image, setImage] = useState(null);
     const [preview, setPreview] = useState(null);
@@ -62,7 +63,7 @@ const Upload_lost = () => {
       alert("Data stored successfully!");
       setSuccess(true);
       setFormData({
-        email: "", name: "", phone: "", title: "",
+        email: user.email, name: user.email, phone: "", title: "",
         description: "", location: "", color: ""
       });
       setImage(null);
@@ -97,20 +98,33 @@ const Upload_lost = () => {
                     { name: "color", label: "Item Color", type: "text" },
                     { name: "location", label: "Last Seen Location", type: "text" },
                   ].map((field) => (
-                    <div key={field.name}>
+                    <div  key={field.name}>
                       <label className="block text-sm font-medium text-gray-300 mb-1">
                         {field.label}
                       </label>
-                      <input
-                        type={field.type}
-                        name={field.name}
-                        value={formData[field.name]}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg 
-                          text-white placeholder-gray-400 focus:outline-none focus:ring-2 
-                          focus:ring-red-500 focus:border-transparent transition-all duration-200"
-                      />
+                      {(field.label==="Your Name"||field.label==="Email Address") ? (
+                        <input
+                          type={field.type}
+                          name={field.name}
+                          value={formData[field.name]}
+                          disabled
+                          className="w-full px-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg 
+                            text-white placeholder-gray-400 focus:outline-none focus:ring-2 
+                            focus:ring-red-500 focus:border-transparent transition-all duration-200
+                            cursor-not-allowed opacity-75"
+                        />
+                      ) : (
+                        <input
+                          type={field.type}
+                          name={field.name}
+                          value={formData[field.name]}
+                          onChange={handleChange}
+                          required
+                          className="w-full px-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg 
+                            text-white placeholder-gray-400 focus:outline-none focus:ring-2 
+                            focus:ring-red-500 focus:border-transparent transition-all duration-200"
+                        />
+                      )}
                     </div>
                   ))}
                 </div>
