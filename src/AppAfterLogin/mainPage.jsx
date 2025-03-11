@@ -34,8 +34,8 @@ const MainPage = ({user,setUser}) => {
             { page==0 && <Home page={page} setPage={setPage} ></Home>}
             { page==1 && <Found></Found>}
             { page==2 && <Lost></Lost>}
-            { page==3 && <Upload_find></Upload_find>}
-            { page==4 && <Upload_lost></Upload_lost>}
+            { page==3 && <Upload_find user={user}></Upload_find>}
+            { page==4 && <Upload_lost user={user}></Upload_lost>}
             <Footer></Footer> 
         </div>
     ) : 
