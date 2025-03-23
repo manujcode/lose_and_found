@@ -1,14 +1,22 @@
 // src/auth.js
 import { account, OAuthProvider } from './appwrite.js'
 
+const getRedirectUrl = (path = '') => {
+  const baseUrl = import.meta.env.PROD 
+    ? 'https://lose-and-found.vercel.app'
+    : 'http://localhost:5173';
+  return `${baseUrl}${path}`;
+};
+
 export const loginWithGoogle = async () => {
   try {
-    await account.createOAuth2Session(OAuthProvider.Google,
-        'http://localhost:5173/success',
-        'http://localhost:5173/failed'
-    )
+    await account.createOAuth2Session(
+      OAuthProvider.Google,
+      getRedirectUrl('/success'),
+      getRedirectUrl('/failed')
+    );
   } catch (error) {
-    console.error(error,"xxxxx")
+    console.error(error,"yuyuyu")
   }
 }
 
@@ -27,4 +35,3 @@ export const getUser = async () => {
     console.error(error)
   }
 }
-
