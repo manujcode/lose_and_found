@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { databases, storage } from '../appwrite'
-import {ID} from 'appwrite'
+import { ID } from 'appwrite'
 
-const Upload_find = ({user}) => {
+const Upload_find = ({ user }) => {
+
   const [formData, setFormData] = useState({
     email: user.email,
     name: user.name,
@@ -12,12 +13,18 @@ const Upload_find = ({user}) => {
     location: "",
     color: "",
     imageUrl: null,
+    tags: "",
+    course: ""
   });
+
+
     
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [imageError, setImageError] = useState(false);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,6 +35,7 @@ const Upload_find = ({user}) => {
     const file = e.target.files[0];
     if (file) {
       setImage(file);
+      setImageError(false);
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result);
@@ -38,6 +46,15 @@ const Upload_find = ({user}) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!image) {
+      setImageError(true);
+      return;
+    }
+    setLoading(true);
+    let imageUrl = null;
+
+    try {
+      if (image) {
     setLoading(true);
     let   imageUrl =null;
 
@@ -49,6 +66,42 @@ const Upload_find = ({user}) => {
           ID.unique(),
           image
         );
+        imageUrl = `https://cloud.appwrite.io/v1/storage/buckets/${import.meta.env.VITE_APPWRITE_BUCKET_ID}/files/${imageUpload.$id}/view?project=${import.meta.env.VITE_APPWRITE_PROJECT_ID}`;
+        console.log(imageUrl);
+      }
+
+      const res = await databases.createDocument(
+        import.meta.env.VITE_APPWRITE_DATABASE_ID,
+        import.meta.env.VITE_APPWRITE_FOUND_COLLECTION_ID,
+        ID.unique(),
+        { ...formData, imageUrl, phone: formData.phone }
+      );
+      console.log("Document Created:", res);
+      alert("Data stored successfully!");
+      setSuccess(true);
+      setFormData({
+        email: user.email,
+        name: user.name,
+        phone: "",
+        title: "",
+        description: "",
+        location: "",
+        color: "",
+        imageUrl: null,
+        tags: "",
+        course: ""
+      });
+      setImage(null);
+      setPreview(null);
+    } catch (err) {
+      console.log(err);
+      alert("Error uploading item. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
          imageUrl = `https://cloud.appwrite.io/v1/storage/buckets/${import.meta.env.VITE_APPWRITE_BUCKET_ID}/files/${imageUpload.$id}/view?project=${import.meta.env.VITE_APPWRITE_PROJECT_ID}`;
         console.log(imageUrl);
       }
@@ -84,34 +137,41 @@ const Upload_find = ({user}) => {
         <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden">
           <div className="px-4 py-6 sm:p-10">
             <div className="text-center mb-6 sm:mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">Report Found Item</h2>
-              <p className="text-sm sm:text-base text-gray-300">Help others find their lost items</p>
+              <h2 className="text-2xl sm:text-3xl font-bold text-green-500 mb-2">Report Found Item</h2>
+              <p className="text-sm sm:text-base text-green-500">Help others find their lost items</p>
+
+           
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 {[
-                  { name: "name", label: "Your Name", type: "text" },
-                  { name: "email", label: "Email Address", type: "email" },
-                  { name: "phone", label: "Phone Number", type: "tel" },
-                  { name: "title", label: "Item Title", type: "text" },
-                  { name: "color", label: "Item Color", type: "text" },
-                  { name: "location", label: "Found Location", type: "text" },
+                  { name: "name", label: "Your Name ", type: "text" },
+                  { name: "email", label: "Email Address ", type: "email" },
+                  { name: "phone", label: "Phone Number (must be 10 digit)", type: "tel" },
+                  { name: "title", label: "Item Title ", type: "text" },
+                  { name: "color", label: "Item Color ", type: "text" },
+                  { name: "location", label: "Found Location ", type: "text" },
+
+
                 ].map((field) => (
                   <div key={field.name}>
                     <label className="block text-sm font-medium text-gray-300 mb-1">
                       {field.label}
+                      <span className="text-red-500">*</span>
                     </label>
-                    {(field.label==="Your Name"||field.label==="Email Address") ? (
+                    {(field.name 
+                      "name" || field.name === "email") ? (
+
                       <input
                         type={field.type}
                         name={field.name}
                         value={formData[field.name]}
-                        disabled
-                        className="w-full px-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg 
+                        disabled = "true"
+                        className="w-full px-4 py-2 bg-gray-800/50 border cursor-not-allowed border-gray-600 rounded-lg 
                           text-white placeholder-gray-400 focus:outline-none focus:ring-2 
-                          focus:ring-green-500 focus:border-transparent transition-all duration-200
-                          cursor-not-allowed opacity-75"
+                          focus:ring-green-500 focus:border-transparent transition-all duration-200"
+
                       />
                     ) : (
                       <input
@@ -127,6 +187,99 @@ const Upload_find = ({user}) => {
                     )}
                   </div>
                 ))}
+
+                {/* Course Dropdown */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Batch 
+                    <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    name="course"
+                    value={formData.course}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg 
+                      text-white placeholder-gray-400 focus:outline-none focus:ring-2 
+                      focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                  >
+                    <option value="">Select your batch</option>
+                    <option value="BTech 2021">BTech 2021</option>
+                    <option value="BTech 2022">BTech 2022</option>
+                    <option value="BTech 2023">BTech 2023</option>
+                    <option value="BTech 2024">BTech 2024</option>
+                    <option value="MTech 2023">MTech 2023</option>
+                    <option value="MTech 2024">MTech 2024</option>
+                    <option value="MBA 2023">MBA 2023</option>
+                    <option value="MBA 2024">MBA 2024</option>
+                    <option value="MSc 2023">MSc 2023</option>
+                    <option value="MSc 2024">MSc 2024</option>
+                    <option value="BSc BEd 2023">BSc BEd 2023</option>
+                    <option value="BSc BEd 2024">BSc BEd 2024</option>
+                    <option value="PhD 2021">PhD 2021</option>
+                    <option value="PhD 2022">PhD 2022</option>
+                    <option value="PhD 2023">PhD 2023</option>
+                    <option value="PhD 2024">PhD 2024</option>
+                    <option value="Faculty">Faculty</option>
+                    <option value="Others">Others</option>
+                  </select>
+                </div>
+
+                {/* Tags Dropdown */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Item Category 
+                    <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    name="tags"
+                    value={formData.tags}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg 
+                      text-white placeholder-gray-400 focus:outline-none focus:ring-2 
+                      focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                  >
+                    <option value="">Select item category</option>
+                    <option value="ID Card">ID Card</option>
+                    <option value="Bag">Bag</option>
+                    <option value="Mobile">Mobile Phone</option>
+                    <option value="Laptop">Laptop</option>
+                    <option value="Keys">Keys</option>
+                    <option value="Wallet">Wallet</option>
+                    <option value="Books">Books</option>
+                    <option value="Documents">Documents</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Clothing">Clothing</option>
+                    <option value="Water Bottle">Water Bottle</option>
+                    <option value="Accessories">Accessories</option>
+                    <option value="Others">Others</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">
+                  Description 
+                  <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  required
+                  rows="4"
+                  className="w-full px-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg 
+                    text-white placeholder-gray-400 focus:outline-none focus:ring-2 
+                    focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-300">
+                  Item Image
+                  <span className="text-red-500">*</span>
+
               </div>
 
               <div>
@@ -175,10 +328,37 @@ const Upload_find = ({user}) => {
                       onChange={handleFileChange}
                       className="hidden"
                       accept="image/*"
+                      required
                     />
                   </label>
                 </div>
+                {imageError && (
+                  <p className="text-red-500 text-sm mt-2">Please upload an image before submitting.</p>
+                )}
               </div>
+
+              <div className="flex justify-end pt-6">
+                <button
+                  type="submit"
+                  disabled={loading || !image}
+                  className={`px-8 py-3 rounded-lg text-white font-medium 
+                    ${loading || !image 
+                      ? 'bg-gray-600 cursor-not-allowed' 
+                      : 'bg-green-600 hover:bg-green-700'} 
+                    transition-colors duration-200 flex items-center`}
+                >
+                  {loading ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Submitting...
+                    </>
+                  ) : 'Submit Report'}
+                </button>
+              </div>
+
 
               <div className="flex justify-end pt-6">
                 <button

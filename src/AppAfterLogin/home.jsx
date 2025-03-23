@@ -1,26 +1,29 @@
 import React from 'react';
 
 const Home = ({page, setPage}) => {
-  const MenuCard = ({ title, onClick, color, icon }) => (
+  const MenuCard = ({ title, onClick, color, icon,backgroundImage }) => (
     <div 
       onClick={onClick}
       className={`${color} w-full rounded-2xl shadow-2xl transform transition-all duration-300 
         hover:scale-105 hover:shadow-3xl cursor-pointer overflow-hidden group`}
+        style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+
     >
-      <div className="h-64 sm:h-80 w-full p-6 sm:p-8 flex flex-col justify-between backdrop-blur-sm bg-white/10">
-        <div className="text-white text-4xl sm:text-6xl">{icon}</div>
+      <div className="h-64 sm:h-80 w-full p-6 sm:p-8 flex flex-col justify-between  bg-white/10">
+        <div className="text-white text-4xl  sm:text-6xl">{icon}</div>
         <div>
-          <h3 className="text-2xl sm:text-4xl font-bold text-white mb-2 group-hover:text-white/90">{title}</h3>
+          <h3 className="text-2xl sm:text-4xl backdrop-blur inline-block font-bold text-black mb-2 group-hover:text-black/90">{title}</h3>
           <div className="w-12 sm:w-16 h-1 bg-white rounded-full transform origin-left group-hover:scale-x-150 transition-transform"></div>
         </div>
       </div>
     </div>
   );
 
-  const StatCard = ({ title, value, color }) => (
+  const StatCard = ({ title, value, color,backgroundImage }) => (
     <div className="bg-gray-800/50 rounded-xl p-4 sm:p-6 backdrop-blur-sm">
       <h3 className="text-gray-400 text-xs sm:text-sm uppercase tracking-wider mb-1">{title}</h3>
       <p className={`${color} text-2xl sm:text-4xl font-bold`}>{value}</p>
+
     </div>
   );
 
@@ -42,24 +45,28 @@ const Home = ({page, setPage}) => {
             onClick={() => setPage(1)}
             color="bg-gradient-to-br from-green-500 to-green-700"
             icon="🔍"
+            backgroundImage = "/9886321.jpg"
           />
           <MenuCard 
             title="Lost Items"
             onClick={() => setPage(2)}
             color="bg-gradient-to-br from-red-500 to-red-700"
             icon="❓"
+            backgroundImage ="/woman-8473560_1280.webp"
           />
           <MenuCard 
             title="Report Found"
             onClick={() => setPage(3)}
             color="bg-gradient-to-br from-blue-500 to-blue-700"
             icon="📝"
+            backgroundImage ="/investigation-report-1024x683.png"
           />
           <MenuCard 
             title="Report Lost"
             onClick={() => setPage(4)}
             color="bg-gradient-to-br from-purple-500 to-purple-700"
             icon="📢"
+            backgroundImage = "/image.png"
           />
         </div>
 
