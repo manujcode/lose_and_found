@@ -22,6 +22,8 @@ const Upload_find = ({ user }) => {
   const [success, setSuccess] = useState(false);
   const [imageError, setImageError] = useState(false);
 
+
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -80,6 +82,7 @@ const Upload_find = ({ user }) => {
         imageUrl: null,
         tags: "",
         course: ""
+
       });
       setImage(null);
       setPreview(null);
@@ -142,6 +145,7 @@ const Upload_find = ({ user }) => {
                     )}
                   </div>
                 ))}
+
 
                 {/* Course Dropdown */}
                 <div>
