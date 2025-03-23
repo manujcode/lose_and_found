@@ -96,12 +96,12 @@ const SingleFoundItem = ({id, setSelectedItem}) => {
                       <dd className="mt-1 text-gray-900">{item.location}</dd>
                     </div>
                     <div>
-                      <dt className="text-sm font-semibold text-gray-500">Category</dt>
-                      <dd className="mt-1 text-gray-900">{item.category || 'Not specified'}</dd>
+                      <dt className="text-sm font-semibold text-gray-500">Course</dt>
+                      <dd className="mt-1 text-gray-900">{item.course || 'Not specified'}</dd>
                     </div>
                     <div>
-                      <dt className="text-sm font-semibold text-gray-500">Brand</dt>
-                      <dd className="mt-1 text-gray-900">{item.brand || 'Not specified'}</dd>
+                      <dt className="text-sm font-semibold text-gray-500">Tags</dt>
+                      <dd className="mt-1 text-gray-900">{item.tags || 'Not specified'}</dd>
                     </div>
                   </dl>
                 </div>
