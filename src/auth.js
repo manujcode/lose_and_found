@@ -12,7 +12,7 @@ export const loginWithGoogle = async () => {
   try {
     await account.createOAuth2Session(
       OAuthProvider.Google,
-      getRedirectUrl('/success'),
+      getRedirectUrl('/'),
       getRedirectUrl('/failed')
     );
   } catch (error) {
