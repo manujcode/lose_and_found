@@ -3,7 +3,7 @@ import { account, OAuthProvider } from './appwrite.js'
 
 const getRedirectUrl = (path = '') => {
   const baseUrl = import.meta.env.PROD 
-    ? 'https://lose-and-found-nitj.vercel.app'
+    ? 'https://lose-and-found.vercel.app'
 
     : 'http://localhost:5173';
   return `${baseUrl}${path}`;
@@ -11,10 +11,7 @@ const getRedirectUrl = (path = '') => {
 
 export const loginWithGoogle = async () => {
   try {
-    await account.createOAuth2Session(OAuthProvider.Google,
-         'https://lose-and-found-nitj.vercel.app',
-         'https://lose-and-found-nitj.vercel.app/failed'
-    )
+    
 
     await account.createOAuth2Session(
       OAuthProvider.Google,
