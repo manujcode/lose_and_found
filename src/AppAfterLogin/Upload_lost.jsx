@@ -13,7 +13,8 @@ const Upload_find = ({ user }) => {
     color: "",
     imageUrl: null,
     tags: "",
-    course: ""
+    course: "",
+    phonePrivate: false
   });
     
   const [image, setImage] = useState(null);
@@ -21,6 +22,7 @@ const Upload_find = ({ user }) => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false);
 
 
 
@@ -44,10 +46,7 @@ const Upload_find = ({ user }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!image) {
-      setImageError(true);
-      return;
-    }
+    
     setLoading(true);
     let imageUrl = null;
 
@@ -64,9 +63,9 @@ const Upload_find = ({ user }) => {
 
       const res = await databases.createDocument(
         import.meta.env.VITE_APPWRITE_DATABASE_ID,
-        import.meta.env.VITE_APPWRITE_FOUND_COLLECTION_ID,
+        import.meta.env.VITE_APPWRITE_LOST_COLLECTION_ID,
         ID.unique(),
-        { ...formData, imageUrl, phone: +formData.phone }
+        { ...formData, imageUrl, phone: +formData.phone ,phonePrivate:isPrivate }
       );
       console.log("Document Created:", res);
       alert("Data stored successfully!");
@@ -81,7 +80,8 @@ const Upload_find = ({ user }) => {
         color: "", 
         imageUrl: null,
         tags: "",
-        course: ""
+        course: "",
+        phonePrivate:false
 
       });
       setImage(null);
@@ -106,46 +106,148 @@ const Upload_find = ({ user }) => {
 </p>
             </div>
 
+            <style jsx>{`
+              .slideIn {
+                animation: slideIn 1s ease-out;
+              }
+
+              @keyframes slideIn {
+                0% {
+                  transform: translateX(-100%);
+                  opacity: 0;
+                }
+                100% {
+                  transform: translateX(0);
+                  opacity: 1;
+                }
+              }
+
+              .marquee {
+                overflow: hidden;
+                white-space: nowrap;
+                box-sizing: border-box;
+                animation: marquee 15s linear infinite;
+              }
+
+              @keyframes marquee {
+                0% { transform: translateX(100%); }
+                100% { transform: translateX(-100%); }
+              }
+            `}</style>
+
+            <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 marquee" role="alert">
+              <p className="font-bold inline-block">Disclaimer: If you upload fake information or break any rules, strict action will be taken.</p>
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                {[
-                  { name: "name", label: "Your Name ", type: "text" },
-                  { name: "email", label: "Email Address ", type: "email" },
-                  { name: "phone", label: "Phone Number (must be 10 digit)", type: "tel" },
-                  { name: "title", label: "Item Title ", type: "text" },
-                  { name: "color", label: "Item Color ", type: "text" },
-                  { name: "location", label: "Found Location ", type: "text" },
-                ].map((field) => (
-                  <div key={field.name}>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">
-                      {field.label}
-                      <span className="text-red-500">*</span>
-                    </label>
-                    {(field.name === "name" || field.name === "email") ? (
-                      <input
-                        type={field.type}
-                        name={field.name}
-                        value={formData[field.name]}
-                        disabled = "true"
-                        className="w-full px-4 py-2 bg-gray-800/50 border cursor-not-allowed border-gray-600 rounded-lg 
-                          text-white placeholder-gray-400 focus:outline-none focus:ring-2 
-                          focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                      />
-                    ) : (
-                      <input
-                        type={field.type}
-                        name={field.name}
-                        value={formData[field.name]}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg 
-                          text-white placeholder-gray-400 focus:outline-none focus:ring-2 
-                          focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                      />
-                    )}
-                  </div>
-                ))}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Your Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    disabled
+                    className="w-full px-4 py-2 bg-gray-800/50 border cursor-not-allowed border-gray-600 rounded-lg 
+                      text-white placeholder-gray-400 focus:outline-none focus:ring-2 
+                      focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                  />
+                </div>
 
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Email Address <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    disabled
+                    className="w-full px-4 py-2 bg-gray-800/50 border cursor-not-allowed border-gray-600 rounded-lg 
+                      text-white placeholder-gray-400 focus:outline-none focus:ring-2 
+                      focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                  />
+                  
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Phone Number (must be 10 digit) <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg 
+                      text-white placeholder-gray-400 focus:outline-none focus:ring-2 
+                      focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                  />
+                  <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="private"
+                  name="private"
+                  checked={isPrivate}
+                  onChange={(e) => setIsPrivate(e.target.checked)}
+                  className="mr-2"
+                />
+                <label htmlFor="private" className="text-sm font-medium text-gray-300">
+                  Mark  phone Number private
+                </label>
+              </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Item Title <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg 
+                      text-white placeholder-gray-400 focus:outline-none focus:ring-2 
+                      focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Item Color <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="color"
+                    value={formData.color}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg 
+                      text-white placeholder-gray-400 focus:outline-none focus:ring-2 
+                      focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Found Location <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg 
+                      text-white placeholder-gray-400 focus:outline-none focus:ring-2 
+                      focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                  />
+                </div>
 
                 {/* Course Dropdown */}
                 <div>
@@ -317,3 +419,17 @@ const Upload_find = ({ user }) => {
 }
 
 export default Upload_find;
+
+<style jsx>{`
+  .marquee {
+    overflow: hidden;
+    white-space: nowrap;
+    box-sizing: border-box;
+    animation: marquee 15s linear infinite;
+  }
+
+  @keyframes marquee {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+  }
+`}</style>

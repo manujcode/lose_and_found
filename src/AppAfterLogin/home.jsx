@@ -41,40 +41,40 @@ const Home = ({page, setPage}) => {
         {/* Menu Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8 mb-12 sm:mb-16">
           <MenuCard 
-            title="Found Items"
-            onClick={() => setPage(1)}
-            color="bg-gradient-to-br from-green-500 to-green-700"
-            icon="🔍"
-            backgroundImage = "/9886321.jpg"
-          />
-          <MenuCard 
             title="Lost Items"
             onClick={() => setPage(2)}
             color="bg-gradient-to-br from-red-500 to-red-700"
-            icon="❓"
+            icon=""
             backgroundImage ="/woman-8473560_1280.webp"
           />
+          <MenuCard 
+            title="Found Items"
+            onClick={() => setPage(1)}
+            color="bg-gradient-to-br from-green-500 to-green-700"
+            icon=""
+            backgroundImage = "/9886321.jpg"
+          />
+            <MenuCard 
+              title="Report Lost"
+              onClick={() => setPage(4)}
+              color="bg-gradient-to-br from-purple-500 to-purple-700"
+              icon=""
+              backgroundImage = "/image.png"
+            />
           <MenuCard 
             title="Report Found"
             onClick={() => setPage(3)}
             color="bg-gradient-to-br from-blue-500 to-blue-700"
-            icon="📝"
+            icon=""
             backgroundImage ="/investigation-report-1024x683.png"
-          />
-          <MenuCard 
-            title="Report Lost"
-            onClick={() => setPage(4)}
-            color="bg-gradient-to-br from-purple-500 to-purple-700"
-            icon="📢"
-            backgroundImage = "/image.png"
           />
         </div>
 
         {/* Stats Section */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
           <StatCard title="Total Items" value="124" color="text-blue-400" />
-          <StatCard title="Found Items" value="76" color="text-green-400" />
           <StatCard title="Lost Items" value="48" color="text-red-400" />
+          <StatCard title="Found Items" value="76" color="text-green-400" />
           <StatCard title="Success Rate" value="82%" color="text-yellow-400" />
         </div>
       </div>

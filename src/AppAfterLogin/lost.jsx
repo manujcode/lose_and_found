@@ -3,7 +3,7 @@ import { databases } from '../appwrite';
 import { Query } from 'appwrite';
 import SingleLostItem from './singleLostItem';
 
-const Lost = () => {
+const Lost = ({user}) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -61,7 +61,7 @@ const Lost = () => {
   };
 
   if (selectedItem) {
-    return <SingleLostItem id={selectedItem} setSelectedItem={setSelectedItem} />;
+    return <SingleLostItem user ={user} id={selectedItem} setSelectedItem={setSelectedItem} />;
   }
 
   return (
@@ -129,11 +129,17 @@ const Lost = () => {
               className="bg-white cursor-pointer rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300"
             >
               <div className="relative h-48">
-                <img
-                  src={item.imageUrl}
-                  alt={item.title}
-                  className="w-full h-full object-cover"
-                />
+              {item.imageUrl ? (
+                  <img
+                    src={item.imageUrl}
+                    alt={item.title}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                    <span className="text-gray-500">Image Is Not Available or For Clue</span>
+                  </div>
+                )}
                 <div className="absolute top-2 right-2">
                   <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs sm:text-sm">
                     Lost
@@ -173,7 +179,7 @@ const Lost = () => {
                       window.location.href = `tel:${item.phone}`;
                     }}
                   >
-                    {item.phone}
+                    {item.phonePrivate?"Mob no private":item.phone}
                   </button>
                 </div>
               </div>

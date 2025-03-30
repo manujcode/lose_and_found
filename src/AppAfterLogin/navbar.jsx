@@ -1,12 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { logoutUser } from '../auth';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 // import { Navigate } from 'react-router-dom';
+
+// List of admin emails who can access the admin dashboard
+// In a real application, this should come from a secure source like environment variables
+// For demo purposes, add your own email here to test the admin functionality
+const ADMIN_EMAILS = [
+  'manujg.it.21@nitj.ac.in',
+  'your.email@example.com', // Replace with your email to test
+  // Add more admin emails as needed
+];
 
 const Navbar = ({page,setPage,user,setUser}) => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const dropdownRef = useRef(null);
+    const navigate = useNavigate();
+    const isAdmin = user && ADMIN_EMAILS.includes(user.email);
    
     useEffect(() => {
       const handleClickOutside = (event) => {
@@ -28,6 +39,10 @@ const Navbar = ({page,setPage,user,setUser}) => {
         } catch (error) {
             console.error("Error logging out:", error);
         }
+    };
+
+    const handleAdminClick = () => {
+        navigate('/admin');
     };
 
     console.log(user,"nknknknk user")
@@ -78,18 +93,30 @@ const Navbar = ({page,setPage,user,setUser}) => {
                             <NavButton onClick={() => setPage(0)} isActive={page === 0}>
                                 Home
                             </NavButton>
-                            <NavButton onClick={() => setPage(1)} isActive={page === 1}>
-                                Found Items
-                            </NavButton>
                             <NavButton onClick={() => setPage(2)} isActive={page === 2}>
                                 Lost Items
                             </NavButton>
-                            <NavButton onClick={() => setPage(3)} isActive={page === 3}>
-                                Report Found
+                            <NavButton onClick={() => setPage(1)} isActive={page === 1}>
+                                Found Items
                             </NavButton>
                             <NavButton onClick={() => setPage(4)} isActive={page === 4}>
                                 Report Lost
                             </NavButton>
+                            <NavButton onClick={() => setPage(3)} isActive={page === 3}>
+                                Report Found
+                            </NavButton>
+                            
+                            {isAdmin && (
+                                <NavButton onClick={handleAdminClick} isActive={false}>
+                                    <span className="flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                        Admin
+                                    </span>
+                                </NavButton>
+                            )}
 
                             {/* Profile Dropdown */}
                             <div className="relative" ref={dropdownRef}>
@@ -142,10 +169,11 @@ const Navbar = ({page,setPage,user,setUser}) => {
                         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                             {[
                                 { text: 'Home', onClick: () => setPage(0), active: page === 0 },
-                                { text: 'Found Items', onClick: () => setPage(1), active: page === 1 },
                                 { text: 'Lost Items', onClick: () => setPage(2), active: page === 2 },
-                                { text: 'Report Found', onClick: () => setPage(3), active: page === 3 },
+                                { text: 'Found Items', onClick: () => setPage(1), active: page === 1 },
                                 { text: 'Report Lost', onClick: () => setPage(4), active: page === 4 },
+                                { text: 'Report Found', onClick: () => setPage(3), active: page === 3 },
+                                ...(isAdmin ? [{ text: 'Admin Dashboard', onClick: handleAdminClick, active: false }] : []),
                             ].map((item) => (
                                 <button
                                     key={item.text}
