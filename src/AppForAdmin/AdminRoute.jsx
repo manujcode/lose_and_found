@@ -7,7 +7,7 @@ import AdminDashboard from './AdminDashboard';
 // For demo purposes, add your own email here to test the admin functionality
 const ADMIN_EMAILS = [
   'manujg.it.21@nitj.ac.in',
-  'your.email@example.com', // Replace with your email to test
+  'kumarmohit@nitj.ac.in', // Replace with your email to test
   // Add more admin emails as needed
 ];
 
