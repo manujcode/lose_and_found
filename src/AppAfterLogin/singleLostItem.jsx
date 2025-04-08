@@ -16,6 +16,8 @@ const SingleLostItem = ({user ,id,setSelectedItem}) => {
   const [loading, setLoading] = useState(true);
   const [comments, setComments] = useState([]);
   const [comment,setComment] = useState(null);
+  const [showRequestModal, setShowRequestModal] = useState(false);
+  const [requestInfo, setRequestInfo] = useState('');
 
   useEffect(() => {
     const fetchItem = async () => {
@@ -89,6 +91,35 @@ const SingleLostItem = ({user ,id,setSelectedItem}) => {
     setSelectedItem(null);
   }
 
+  const handleRequestSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // Update the item status to delivered
+     await databases.updateDocument(
+        import.meta.env.VITE_APPWRITE_DATABASE_ID,
+        import.meta.env.VITE_APPWRITE_LOST_COLLECTION_ID,
+        id,
+        {
+          Requested: true,
+          Requested_reason: requestInfo
+        }
+      );
+      //  console.log(req)
+      setShowRequestModal(false);
+      setRequestInfo('');
+      alert('Item marked as delivered successfully!');
+      setSelectedItem(null); // Go back to the list after successful delivery
+    } catch (error) {
+      console.error('Error marking item as delivered:', error);
+      alert('Failed to mark item as delivered. Please try again.');
+    }
+  };
+
+  const handleRequestChange = (e) => {
+    const value = e.target.value;
+    setRequestInfo(value);
+  };
+
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center">
@@ -108,12 +139,20 @@ const SingleLostItem = ({user ,id,setSelectedItem}) => {
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
-        <button 
-          onClick={() => handleback()}
-          className="mb-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-        >
-          ← Back to List
-        </button>
+        <div className="flex justify-between items-center mb-6">
+          <button 
+            onClick={() => handleback()}
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+          >
+            ← Back to List
+          </button>
+          <button
+            onClick={() => setShowRequestModal(true)}
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+          >
+            Confirm Delivery
+          </button>
+        </div>
 
         <div className="bg-white rounded-lg shadow-xl overflow-hidden">
           <div className="md:flex">
@@ -255,10 +294,45 @@ const SingleLostItem = ({user ,id,setSelectedItem}) => {
         </div>
       </div>
 
-
-
-
-
+      {/* Request Modal */}
+      {showRequestModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <h2 className="text-xl font-semibold mb-4">Item Recovered Confirmation</h2>
+            <form onSubmit={handleRequestSubmit}>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Recovery Details
+                </label>
+                <textarea
+                  name="reason"
+                  value={requestInfo}
+                  onChange={handleRequestChange}
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                  rows="3"
+                  required
+                  placeholder="Please provide details about how the item was recovered and returned to the owner..."
+                />
+              </div>
+              <div className="flex justify-end space-x-3">
+                <button
+                  type="button"
+                  onClick={() => setShowRequestModal(false)}
+                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                >
+                  Confirm Recovery
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

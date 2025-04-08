@@ -2,45 +2,44 @@ import React, { useState, useEffect } from 'react';
 import { databases, storage } from '../appwrite';
 import { Query } from 'appwrite';
 
-const AdminItemManager = ({ user }) => {
-  const [lostItems, setLostItems] = useState([]);
-  const [foundItems, setFoundItems] = useState([]);
+const AdminDeliveredItems = ({ user }) => {
+  const [deliveredLostItems, setDeliveredLostItems] = useState([]);
+  const [deliveredFoundItems, setDeliveredFoundItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('lost'); // 'lost' or 'found'
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [deleteError, setDeleteError] = useState('');
 
   useEffect(() => {
-    const fetchItems = async () => {
+    const fetchDeliveredItems = async () => {
       setLoading(true);
       try {
-        // Fetch lost items
-        const lostResponse = await databases.listDocuments(
+        // Fetch delivered lost items
+        const lostItemsResponse = await databases.listDocuments(
           import.meta.env.VITE_APPWRITE_DATABASE_ID,
           import.meta.env.VITE_APPWRITE_LOST_COLLECTION_ID,
-          [Query.orderDesc('$createdAt')]
+          [Query.equal('Requested', true)]
         );
-        
-        // Fetch found items
-        const foundResponse = await databases.listDocuments(
+
+        // Fetch delivered found items
+        const foundItemsResponse = await databases.listDocuments(
           import.meta.env.VITE_APPWRITE_DATABASE_ID,
           import.meta.env.VITE_APPWRITE_FOUND_COLLECTION_ID,
-          [Query.orderDesc('$createdAt')]
+          [Query.equal('Requested', true)]
         );
-        
-        setLostItems(lostResponse.documents);
-        setFoundItems(foundResponse.documents);
+
+        setDeliveredLostItems(lostItemsResponse.documents);
+        setDeliveredFoundItems(foundItemsResponse.documents);
       } catch (error) {
-        console.error('Error fetching items:', error);
+        console.error('Error fetching delivered items:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchItems();
+    fetchDeliveredItems();
   }, [deleteSuccess]);
 
   const handleDeleteItem = async (id, type) => {
@@ -63,7 +62,7 @@ const AdminItemManager = ({ user }) => {
           // The URL format is typically: https://cloud.appwrite.io/v1/storage/buckets/[BUCKET_ID]/files/[FILE_ID]/view
           const imageUrlParts = item.imageUrl.split('/');
           const fileId = imageUrlParts[imageUrlParts.length - 2]; // Get the file ID from the URL
-
+            //  console.log( "xxx",imageUrlParts,fileId)
           await storage.deleteFile(
             import.meta.env.VITE_APPWRITE_BUCKET_ID,
             fileId
@@ -118,22 +117,18 @@ const AdminItemManager = ({ user }) => {
     }
   };
 
-  // Filter items based on search term and category
+  // Filter items based on search term
   const filterItems = (items) => {
     return items.filter(item => {
-      const matchesSearch = searchTerm === '' || 
+      return searchTerm === '' || 
         item.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.name?.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesCategory = selectedCategory === '' || item.tags === selectedCategory;
-      
-      return matchesSearch && matchesCategory;
     });
   };
 
-  const filteredLostItems = filterItems(lostItems);
-  const filteredFoundItems = filterItems(foundItems);
+  const filteredLostItems = filterItems(deliveredLostItems);
+  const filteredFoundItems = filterItems(deliveredFoundItems);
   
   const currentItems = activeTab === 'lost' ? filteredLostItems : filteredFoundItems;
 
@@ -189,6 +184,14 @@ const AdminItemManager = ({ user }) => {
           <p className="text-gray-400 text-xs">{item.email}</p>
           <p className="text-gray-400 text-xs">{item.phone}</p>
         </div>
+
+        <div className="bg-purple-500/20 p-2 rounded mb-3">
+          <p className="text-purple-300 text-sm font-medium">Delivery Details</p>
+          <p className="text-purple-400 text-xs">{item.Requested_reason}</p>
+          <p className="text-purple-400 text-xs mt-1">
+            Delivered on: {new Date(item.$updatedAt).toLocaleDateString()}
+          </p>
+        </div>
         
         <div className="flex justify-between items-center">
           <div className="text-gray-400 text-xs">
@@ -227,7 +230,7 @@ const AdminItemManager = ({ user }) => {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-2 sm:p-4 md:p-8">
       <div className="container mx-auto max-w-6xl">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-6 sm:mb-8 text-purple-500">
-          Admin Item Manager
+          Delivered Items Manager
         </h1>
         
         {/* Tabs */}
@@ -256,39 +259,15 @@ const AdminItemManager = ({ user }) => {
           </div>
         </div>
         
-        {/* Search and Filter */}
-        <div className="flex flex-col sm:flex-row gap-3 mb-4 sm:mb-6">
-          <div className="flex-1">
-            <input
-              type="text"
-              placeholder="Search by title, description or name..."
-              className="w-full px-3 py-2 text-sm bg-gray-800/80 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <div className="sm:w-48">
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-3 py-2 text-sm bg-gray-800/80 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-            >
-              <option value="">All Categories</option>
-              <option value="ID Card">ID Card</option>
-              <option value="Bag">Bag</option>
-              <option value="Mobile">Mobile Phone</option>
-              <option value="Laptop">Laptop</option>
-              <option value="Keys">Keys</option>
-              <option value="Wallet">Wallet</option>
-              <option value="Books">Books</option>
-              <option value="Documents">Documents</option>
-              <option value="Electronics">Electronics</option>
-              <option value="Clothing">Clothing</option>
-              <option value="Water Bottle">Water Bottle</option>
-              <option value="Accessories">Accessories</option>
-              <option value="Others">Others</option>
-            </select>
-          </div>
+        {/* Search */}
+        <div className="mb-4 sm:mb-6">
+          <input
+            type="text"
+            placeholder="Search by title, description or name..."
+            className="w-full px-3 py-2 text-sm bg-gray-800/80 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
         
         {/* Success/Error Messages */}
@@ -316,7 +295,7 @@ const AdminItemManager = ({ user }) => {
                   <span className="ml-2">Loading items...</span>
                 </div>
               ) : (
-                `No ${activeTab} items found.`
+                `No delivered ${activeTab} items found.`
               )}
             </div>
           )}
@@ -337,7 +316,7 @@ const AdminItemManager = ({ user }) => {
                   Reporter
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                  Date
+                  Delivery Info
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">
                   Actions
@@ -383,10 +362,10 @@ const AdminItemManager = ({ user }) => {
                       <div className="text-sm text-gray-400">{item.email}</div>
                       <div className="text-sm text-gray-400">{item.phone}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                      {new Date(item.$createdAt).toLocaleDateString()} 
-                      <div className="text-xs text-gray-500">
-                        {new Date(item.$createdAt).toLocaleTimeString()}
+                    <td className="px-6 py-4">
+                      <div className="text-sm text-purple-300">{item.Requested_reason}</div>
+                      <div className="text-xs text-purple-400">
+                        Delivered on: {new Date(item.$updatedAt).toLocaleDateString()}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -425,7 +404,7 @@ const AdminItemManager = ({ user }) => {
                         <span className="ml-2">Loading items...</span>
                       </div>
                     ) : (
-                      `No ${activeTab} items found.`
+                      `No delivered ${activeTab} items found.`
                     )}
                   </td>
                 </tr>
@@ -436,11 +415,11 @@ const AdminItemManager = ({ user }) => {
         
         {/* Item Count */}
         <div className="mt-4 text-right text-sm text-gray-400">
-          {currentItems.length} items • {activeTab === 'lost' ? 'Lost' : 'Found'} items
+          {currentItems.length} delivered {activeTab === 'lost' ? 'lost' : 'found'} items
         </div>
       </div>
     </div>
   );
 };
 
-export default AdminItemManager; 
+export default AdminDeliveredItems; 

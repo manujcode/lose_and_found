@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import AdminItemManager from './AdminItemManager';
+import AdminDeliveredItems from './AdminDeliveredItems';
 import { logoutUser } from '../auth';
 import { useNavigate } from 'react-router-dom';
 
@@ -55,15 +56,24 @@ const AdminDashboard = ({ user, setUser }) => {
             >
               Manage Items
             </button>
-            {/* Add more tabs here as needed */}
             <button
-              onClick={() => setCurrentView('items')}
+              onClick={() => setCurrentView('delivered')}
+              className={`whitespace-nowrap py-3 px-1 border-b-2 font-medium text-xs sm:text-sm ${
+                currentView === 'delivered'
+                  ? 'border-purple-500 text-purple-500'
+                  : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-400'
+              }`}
+            >
+              Delivered Items
+            </button>
+            <button
+              onClick={() => setCurrentView('reports')}
               className="whitespace-nowrap py-3 px-1 border-b-2 font-medium text-xs sm:text-sm border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-400"
             >
               User Reports
             </button>
             <button
-              onClick={() => setCurrentView('items')}
+              onClick={() => setCurrentView('analytics')}
               className="whitespace-nowrap py-3 px-1 border-b-2 font-medium text-xs sm:text-sm border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-400"
             >
               Analytics
@@ -73,6 +83,7 @@ const AdminDashboard = ({ user, setUser }) => {
 
         {/* Content based on current view */}
         {currentView === 'items' && <AdminItemManager user={user} />}
+        {currentView === 'delivered' && <AdminDeliveredItems user={user} />}
       </main>
     </div>
   );

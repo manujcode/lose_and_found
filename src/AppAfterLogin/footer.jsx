@@ -34,17 +34,17 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href="https://www.nitj.ac.in/contact_us" className="hover:text-white transition-colors">
+                <a href="https://nitj.ac.in/admin/Contact.html" className="hover:text-white transition-colors">
                   Contact Us
                 </a>
               </li>
               <li>
-                <a href="https://www.nitj.ac.in/campus_life" className="hover:text-white transition-colors">
+                <a href="https://www.nitj.ac.in/admin/explore.html" className="hover:text-white transition-colors">
                   Campus Life
                 </a>
               </li>
               <li>
-                <a href="https://www.nitj.ac.in/rules_policies" className="hover:text-white transition-colors">
+                <a href="https://www.nitj.ac.in/template/index.html?id=64ae4b97a5e16718759c7e9c?category=newpage" className="hover:text-white transition-colors">
                   Rules & Policies
                 </a>
               </li>

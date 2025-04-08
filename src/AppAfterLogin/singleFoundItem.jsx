@@ -15,6 +15,8 @@ const SingleFoundItem = ({user,id, setSelectedItem}) => {
   const [loading, setLoading] = useState(true);
   const [comments, setComments] = useState([]);
   const [comment,setComment] = useState(null);
+  const [showRequestModal, setShowRequestModal] = useState(false);
+  const [requestInfo, setRequestInfo] = useState(null);
 
   useEffect(() => {
     const fetchItem = async () => {
@@ -88,6 +90,55 @@ const [ state,setState] = useState(1);
     setSelectedItem(null);
   }
 
+  const handleRequestSubmit = async (e) => {
+    e.preventDefault();
+    try {
+    //   const requestData = {
+    //     itemId: id,
+    //     userId: user.$id,
+    //     userName: user.name,
+    //     userEmail: user.email,
+    //     reason: requestDetails.reason,
+    //     contactInfo: requestDetails.contactInfo,
+    //     requestType: 'delivered',
+    //     status: 'completed'
+    //   };
+
+      // Update the item status to delivered
+      await databases.updateDocument(
+        import.meta.env.VITE_APPWRITE_DATABASE_ID,
+        import.meta.env.VITE_APPWRITE_FOUND_COLLECTION_ID,
+        id,
+        {
+          Requested: true,
+          Requested_reason: requestInfo
+        }
+      );
+
+      // Create a record of the delivery
+      // await databases.createDocument(
+      //   import.meta.env.VITE_APPWRITE_DATABASE_ID,
+      //   import.meta.env.VITE_APPWRITE_REQUESTS_COLLECTION_ID,
+      //   ID.unique(),
+      //   requestData
+      // );
+
+      setShowRequestModal(false);
+      setRequestInfo(null);
+      // setRequestDetails({ reason: '', contactInfo: '' });
+      alert('Item marked as delivered successfully!');
+      setSelectedItem(null); // Go back to the list after successful delivery
+    } catch (error) {
+      console.error('Error marking item as delivered:', error);
+      alert('Failed to mark item as delivered. Please try again.');
+    }
+  };
+
+  const handleRequestChange = (e) => {
+    const  value = e.target.value;
+    setRequestInfo( value );
+  };
+
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center">
@@ -107,12 +158,21 @@ const [ state,setState] = useState(1);
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
-        <button 
-          onClick={handleback}
-          className="mb-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-        >
-          ← Back to List
-        </button>
+        <div className="flex justify-between items-center mb-6">
+          <button 
+            onClick={handleback}
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+          >
+            ← Back to List
+          </button>
+          <button
+            onClick={() => setShowRequestModal(true)}
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+          Confirm Delivery
+
+          </button>
+        </div>
 
         <div className="bg-white rounded-lg shadow-xl overflow-hidden">
           <div className="md:flex">
@@ -266,6 +326,59 @@ const [ state,setState] = useState(1);
           </div>
         </div>
       </div>
+
+      {/* Request Modal */}
+      {showRequestModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <h2 className="text-xl font-semibold mb-4">Item Delivered Confirmation</h2>
+            <form onSubmit={handleRequestSubmit}>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Delivery Details
+                </label>
+                <textarea
+                  name="reason"
+                  value={requestInfo}
+                  onChange={handleRequestChange}
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                  rows="3"
+                  required
+                  placeholder="Please provide details about the delivery (e.g., how the item was returned to the owner)..."
+                />
+              </div>
+              {/* <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Additional Information
+                </label>
+                <input
+                  type="text"
+                  name="contactInfo"
+                  value={requestDetails.contactInfo}
+                  onChange={handleRequestChange}
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                  placeholder="Any additional information about the delivery..."
+                />
+              </div> */}
+              <div className="flex justify-end space-x-3">
+                <button
+                  type="button"
+                  onClick={() => setShowRequestModal(false)}
+                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                >
+                  Confirm Delivery
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
