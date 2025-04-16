@@ -6,6 +6,7 @@ const Failed = () => {
       Failed
     </div>
   )
+  
 }
 
 export default Failed
