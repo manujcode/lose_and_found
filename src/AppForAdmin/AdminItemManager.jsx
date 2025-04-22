@@ -12,6 +12,8 @@ const AdminItemManager = ({ user }) => {
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [deleteError, setDeleteError] = useState('');
+  const [disableSuccess, setDisableSuccess] = useState(false);
+  const [disableError, setDisableError] = useState('');
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -41,7 +43,7 @@ const AdminItemManager = ({ user }) => {
     };
 
     fetchItems();
-  }, [deleteSuccess]);
+  }, [deleteSuccess, disableSuccess]);
 
   const handleDeleteItem = async (id, type) => {
     try {
@@ -118,6 +120,50 @@ const AdminItemManager = ({ user }) => {
     }
   };
 
+  const handleToggleDisabled = async (item, type) => {
+    try {
+      const collectionId = type === 'lost' 
+        ? import.meta.env.VITE_APPWRITE_LOST_COLLECTION_ID 
+        : import.meta.env.VITE_APPWRITE_FOUND_COLLECTION_ID;
+      
+      // Update the item with the opposite Disabled status
+      await databases.updateDocument(
+        import.meta.env.VITE_APPWRITE_DATABASE_ID,
+        collectionId,
+        item.$id,
+        {
+          Disabled: !item.Disabled
+        }
+      );
+      
+      setDisableSuccess(true);
+      
+      // Update local state to reflect the change
+      if (type === 'lost') {
+        setLostItems(prevItems => 
+          prevItems.map(i => i.$id === item.$id ? {...i, Disabled: !i.Disabled} : i)
+        );
+      } else {
+        setFoundItems(prevItems => 
+          prevItems.map(i => i.$id === item.$id ? {...i, Disabled: !i.Disabled} : i)
+        );
+      }
+
+      // Reset the success message after 3 seconds
+      setTimeout(() => {
+        setDisableSuccess(false);
+      }, 3000);
+    } catch (error) {
+      console.error('Error toggling item Disabled status:', error);
+      setDisableError('Failed to update item status. Please try again.');
+      
+      // Reset the error message after 3 seconds
+      setTimeout(() => {
+        setDisableError('');
+      }, 3000);
+    }
+  };
+
   // Filter items based on search term and category
   const filterItems = (items) => {
     return items.filter(item => {
@@ -143,11 +189,13 @@ const AdminItemManager = ({ user }) => {
       <div className="flex items-start mb-3">
         <div className="h-16 w-16 mr-3 flex-shrink-0">
           {item.imageUrl ? (
-            <img
-              className="h-16 w-16 rounded-md object-cover"
-              src={item.imageUrl}
-              alt={item.title}
-            />
+            <a href={item.imageUrl} target="_blank" rel="noopener noreferrer" className="block h-16 w-16">
+              <img
+                className="h-16 w-16 rounded-md object-cover"
+                src={item.imageUrl}
+                alt={item.title}
+              />
+            </a>
           ) : (
             <div className="h-16 w-16 rounded-md bg-gray-700 flex items-center justify-center text-gray-400">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -190,11 +238,24 @@ const AdminItemManager = ({ user }) => {
           <p className="text-gray-400 text-xs">{item.phone}</p>
         </div>
         
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mb-2">
           <div className="text-gray-400 text-xs">
             {new Date(item.$createdAt).toLocaleDateString()} {new Date(item.$createdAt).toLocaleTimeString()}
           </div>
           
+          <button 
+            onClick={() => handleToggleDisabled(item, activeTab)}
+            className={`px-3 py-1 rounded-md text-sm ${
+              item.Disabled 
+                ? 'bg-green-600/20 text-green-300 hover:bg-green-600/40' 
+                : 'bg-yellow-600/20 text-yellow-300 hover:bg-yellow-600/40'
+            }`}
+          >
+            {item.Disabled ? 'Enable' : 'Disable'}
+          </button>
+        </div>
+        
+        <div className="flex justify-end items-center">
           {deleteConfirm === item.$id ? (
             <div className="flex items-center space-x-2">
               <button 
@@ -304,6 +365,18 @@ const AdminItemManager = ({ user }) => {
           </div>
         )}
         
+        {disableSuccess && (
+          <div className="bg-blue-500/20 border border-blue-500 text-blue-300 p-3 rounded-lg mb-4">
+            Item status updated successfully!
+          </div>
+        )}
+        
+        {disableError && (
+          <div className="bg-yellow-500/20 border border-yellow-500 text-yellow-300 p-3 rounded-lg mb-4">
+            {disableError}
+          </div>
+        )}
+        
         {/* Mobile view (card layout) */}
         <div className="md:hidden">
           {currentItems.length > 0 ? (
@@ -339,6 +412,9 @@ const AdminItemManager = ({ user }) => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                   Date
                 </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  Status
+                </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">
                   Actions
                 </th>
@@ -352,11 +428,13 @@ const AdminItemManager = ({ user }) => {
                       <div className="flex items-center">
                         <div className="h-12 w-12 flex-shrink-0">
                           {item.imageUrl ? (
-                            <img
-                              className="h-12 w-12 rounded-md object-cover"
-                              src={item.imageUrl}
-                              alt={item.title}
-                            />
+                            <a href={item.imageUrl} target="_blank" rel="noopener noreferrer" className="block h-12 w-12">
+                              <img
+                                className="h-12 w-12 rounded-md object-cover"
+                                src={item.imageUrl}
+                                alt={item.title}
+                              />
+                            </a>
                           ) : (
                             <div className="h-12 w-12 rounded-md bg-gray-700 flex items-center justify-center text-gray-400">
                               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -389,36 +467,58 @@ const AdminItemManager = ({ user }) => {
                         {new Date(item.$createdAt).toLocaleTimeString()}
                       </div>
                     </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        item.Disabled 
+                          ? 'bg-red-100 text-red-800' 
+                          : 'bg-green-100 text-green-800'
+                      }`}>
+                        {item.Disabled ? 'Disabled' : 'Active'}
+                      </span>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      {deleteConfirm === item.$id ? (
-                        <div className="flex justify-end items-center space-x-2">
-                          <button 
-                            onClick={() => handleDeleteItem(item.$id, activeTab)}
-                            className="text-red-500 hover:text-red-400"
-                          >
-                            Confirm
-                          </button>
-                          <button 
-                            onClick={() => setDeleteConfirm(null)}
-                            className="text-gray-400 hover:text-gray-300"
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      ) : (
+                      <div className="flex justify-end items-center space-x-2">
                         <button 
-                          onClick={() => setDeleteConfirm(item.$id)}
-                          className="text-red-500 hover:text-red-400"
+                          onClick={() => handleToggleDisabled(item, activeTab)}
+                          className={`px-2 py-1 rounded text-xs ${
+                            item.Disabled 
+                              ? 'bg-green-900/30 text-green-300 hover:bg-green-900/50' 
+                              : 'bg-yellow-900/30 text-yellow-300 hover:bg-yellow-900/50'
+                          }`}
                         >
-                          Delete
+                          {item.Disabled ? 'Enable' : 'Disable'}
                         </button>
-                      )}
+                        
+                        {deleteConfirm === item.$id ? (
+                          <>
+                            <button 
+                              onClick={() => handleDeleteItem(item.$id, activeTab)}
+                              className="px-2 py-1 bg-red-900/30 text-red-300 rounded text-xs hover:bg-red-900/50"
+                            >
+                              Confirm
+                            </button>
+                            <button 
+                              onClick={() => setDeleteConfirm(null)}
+                              className="px-2 py-1 bg-gray-700 text-gray-300 rounded text-xs"
+                            >
+                              Cancel
+                            </button>
+                          </>
+                        ) : (
+                          <button 
+                            onClick={() => setDeleteConfirm(item.$id)}
+                            className="px-2 py-1 bg-red-900/30 text-red-300 rounded text-xs hover:bg-red-900/50"
+                          >
+                            Delete
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="5" className="px-6 py-4 text-center text-gray-400">
+                  <td colSpan="6" className="px-6 py-4 text-center text-gray-400">
                     {loading ? (
                       <div className="flex justify-center items-center">
                         <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-purple-500"></div>

@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import AdminItemManager from './AdminItemManager';
-import AdminDeliveredItems from './AdminDeliveredItems';
 import AdminAnalytics from './AdminAnalytics';
-import AdminUserReports from './AdminUserReports';
+import AdminSecurityManager from './AdminSecurityManager';
 import { logoutUser } from '../auth';
 import { useNavigate } from 'react-router-dom';
 
@@ -59,24 +58,14 @@ const AdminDashboard = ({ user, setUser }) => {
               Manage Items
             </button>
             <button
-              onClick={() => setCurrentView('delivered')}
+              onClick={() => setCurrentView('security')}
               className={`whitespace-nowrap py-3 px-1 border-b-2 font-medium text-xs sm:text-sm ${
-                currentView === 'delivered'
+                currentView === 'security'
                   ? 'border-purple-500 text-purple-500'
                   : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-400'
               }`}
             >
-              Delivered Items
-            </button>
-            <button
-              onClick={() => setCurrentView('reports')}
-              className={`whitespace-nowrap py-3 px-1 border-b-2 font-medium text-xs sm:text-sm ${
-                currentView === 'reports'
-                  ? 'border-purple-500 text-purple-500'
-                  : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-400'
-              }`}
-            >
-              User Reports
+              Security Manager
             </button>
             <button
               onClick={() => setCurrentView('analytics')}
@@ -93,8 +82,7 @@ const AdminDashboard = ({ user, setUser }) => {
 
         {/* Content based on current view */}
         {currentView === 'items' && <AdminItemManager user={user} />}
-        {currentView === 'delivered' && <AdminDeliveredItems user={user} />}
-        {currentView === 'reports' && <AdminUserReports user={user} />}
+        {currentView === 'security' && <AdminSecurityManager user={user} />}
         {currentView === 'analytics' && <AdminAnalytics user={user} />}
       </main>
     </div>

@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import AppForSecurityGuard from './AppForSecurityGuard';
+import { Client, Databases, Query } from 'appwrite';
 
-// List of security guard emails who can access the security dashboard
-// In a real application, this should come from a secure source like environment variables
-const SECURITY_EMAILS = [
-  'security@nitj.ac.in',
-  'guard@nitj.ac.in',
-  'manujg.it.21@nitj.ac.in',
-  // Add security guard emails here
-];
+// Remove the hardcoded email list as we'll check against the database
+// const SECURITY_EMAILS = [
+//   'security@nitj.ac.in',
+//   'guard@nitj.ac.in',
+//   'manujg.it.21@nitj.ac.in',
+//   // Add security guard emails here
+// ];
 
 const SecurityGuardRoute = ({ user, setUser }) => {
   const [loading, setLoading] = useState(true);
@@ -17,16 +17,41 @@ const SecurityGuardRoute = ({ user, setUser }) => {
 
   useEffect(() => {
     const checkSecurityGuard = async () => {
-      setLoading(true);
-      // Check if user exists and is a security guard
-      // For demo, we're using a simple check against predefined emails
-      // In a production app, you would check against user roles stored in the database
-      if (user && (SECURITY_EMAILS.includes(user.email) || user.email.includes('security') || user.email.includes('guard'))) {
-        setIsSecurityGuard(true);
-      } else {
+      if (!user || !user.email) {
         setIsSecurityGuard(false);
+        setLoading(false);
+        return;
       }
-      setLoading(false);
+
+      try {
+        setLoading(true);
+
+        // Initialize Appwrite client
+        const client = new Client()
+          .setEndpoint('https://cloud.appwrite.io/v1')
+          .setProject(import.meta.env.VITE_APPWRITE_PROJECT_ID);
+        
+        const databases = new Databases(client);
+        const databaseId = import.meta.env.VITE_APPWRITE_DATABASE_ID;
+        const securityGuardsCollectionId = import.meta.env.VITE_APPWRITE_SECURITY_GUARDS_COLLECTION_ID;
+
+        // Query the database to check if user's email is in the security_email field
+        const response = await databases.listDocuments(
+          databaseId,
+          securityGuardsCollectionId,
+          [
+            Query.equal('security_email', user.email)
+          ]
+        );
+
+        // If we found any documents, user is a security guard
+        setIsSecurityGuard(response.documents.length > 0);
+      } catch (error) {
+        console.error('Error checking security guard status:', error);
+        setIsSecurityGuard(false);
+      } finally {
+        setLoading(false);
+      }
     };
 
     checkSecurityGuard();

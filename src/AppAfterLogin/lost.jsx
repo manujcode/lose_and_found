@@ -21,7 +21,9 @@ const Lost = ({user}) => {
           import.meta.env.VITE_APPWRITE_LOST_COLLECTION_ID,
           [Query.orderDesc('$createdAt')]
         );
-        setItems(response.documents);
+        // Filter out disabled items
+        const activeItems = response.documents.filter(item => !item.Disabled);
+        setItems(activeItems);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching items:', error);
@@ -232,13 +234,13 @@ const Lost = ({user}) => {
             Previous
           </button>
           <span className="text-red-500 mx-4">
-            Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
+            Page <strong>{currentPage}</strong> of <strong>{totalPages || 1}</strong>
           </span>
           <button 
             onClick={handleNextPage} 
-            disabled={currentPage === totalPages} 
+            disabled={currentPage === totalPages || totalPages === 0} 
             className={`px-4 py-2 bg-red-600 text-white rounded-lg transition-colors duration-200 
-              ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-red-500'}`}
+              ${currentPage === totalPages || totalPages === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-red-500'}`}
           >
             Next
           </button>

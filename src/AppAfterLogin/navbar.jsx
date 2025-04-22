@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { logoutUser } from '../auth';
 import { Navigate, useNavigate, Link } from 'react-router-dom';
+import { Client, Databases, Query } from 'appwrite';
 // import { Navigate } from 'react-router-dom';
 
 // List of admin emails who can access the admin dashboard
@@ -14,20 +15,23 @@ const ADMIN_EMAILS = [
   // Add more admin emails as needed
 ];
 
-// List of security guard emails who can access the security dashboard
-const SECURITY_EMAILS = [
-  'manujg.it.21@nitj.ac.in',
-  'guard@nitj.ac.in',
-  // Add security guard emails here
-];
+// Remove hardcoded security emails since we'll check the database
+// const SECURITY_EMAILS = [
+//   'manujg.it.21@nitj.ac.in',
+//   'guard@nitj.ac.in',
+//   // Add security guard emails here
+// ];
 
 const Navbar = ({page,setPage,user,setUser}) => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [isSecurityGuard, setIsSecurityGuard] = useState(false);
+    const [securityCheckComplete, setSecurityCheckComplete] = useState(false);
     const dropdownRef = useRef(null);
     const navigate = useNavigate();
     const isAdmin = user && ADMIN_EMAILS.includes(user.email);
-    const isSecurityGuard = user && (SECURITY_EMAILS.includes(user.email) || user.email.includes('security') || user.email.includes('guard'));
+    // Remove the hardcoded security check
+    // const isSecurityGuard = user && (SECURITY_EMAILS.includes(user.email) || user.email.includes('security') || user.email.includes('guard'));
    
     useEffect(() => {
       const handleClickOutside = (event) => {
@@ -41,6 +45,47 @@ const Navbar = ({page,setPage,user,setUser}) => {
         document.removeEventListener('mousedown', handleClickOutside);
       };
     }, []);
+
+    // Add effect to check if the user is a security guard using the database
+    useEffect(() => {
+      const checkSecurityGuard = async () => {
+        if (!user || !user.email) {
+          setIsSecurityGuard(false);
+          setSecurityCheckComplete(true);
+          return;
+        }
+
+        try {
+          // Initialize Appwrite client
+          const client = new Client()
+            .setEndpoint('https://cloud.appwrite.io/v1')
+            .setProject(import.meta.env.VITE_APPWRITE_PROJECT_ID);
+          
+          const databases = new Databases(client);
+          const databaseId = import.meta.env.VITE_APPWRITE_DATABASE_ID;
+          const securityGuardsCollectionId = import.meta.env.VITE_APPWRITE_SECURITY_GUARDS_COLLECTION_ID;
+
+          // Query the database to check if user's email is in the security_email field
+          const response = await databases.listDocuments(
+            databaseId,
+            securityGuardsCollectionId,
+            [
+              Query.equal('security_email', user.email)
+            ]
+          );
+
+          // If we found any documents, user is a security guard
+          setIsSecurityGuard(response.documents.length > 0);
+        } catch (error) {
+          console.error('Error checking security guard status:', error);
+          setIsSecurityGuard(false);
+        } finally {
+          setSecurityCheckComplete(true);
+        }
+      };
+
+      checkSecurityGuard();
+    }, [user]);
 
     const handleLogout = async() => {
         try {
@@ -80,6 +125,10 @@ const Navbar = ({page,setPage,user,setUser}) => {
             {children}
         </button>
     );
+
+    // If security check is not complete, we could show a loading indicator
+    // But to avoid UI flicker, we'll just render normally without security button
+    // until the check is complete
 
     return (
         user ? (
@@ -139,7 +188,7 @@ const Navbar = ({page,setPage,user,setUser}) => {
                                 </NavButton>
                             )}
 
-                            {isSecurityGuard && (
+                            {securityCheckComplete && isSecurityGuard && (
                                 <NavButton onClick={handleSecurityClick} isActive={false}>
                                     <span className="flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -208,7 +257,7 @@ const Navbar = ({page,setPage,user,setUser}) => {
                                 { text: 'Report Found', onClick: () => setPage(3), active: page === 3 },
                                 { text: 'My Dashboard', onClick: () => setPage(5), active: page === 5 },
                                 ...(isAdmin ? [{ text: 'Admin Dashboard', onClick: handleAdminClick, active: false }] : []),
-                                ...(isSecurityGuard ? [{ text: 'Security Dashboard', onClick: handleSecurityClick, active: false }] : []),
+                                ...(securityCheckComplete && isSecurityGuard ? [{ text: 'Security Dashboard', onClick: handleSecurityClick, active: false }] : []),
                             ].map((item) => (
                                 <button
                                     key={item.text}

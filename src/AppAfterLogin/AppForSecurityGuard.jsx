@@ -395,7 +395,9 @@ const AppForSecurityGuard = ({ user }) => {
                             <div className="flex items-center">
                               <div className="flex-shrink-0 h-10 w-10">
                                 {item.imageUrl ? (
-                                  <img className="h-10 w-10 rounded-full object-cover" src={item.imageUrl} alt="" />
+                                  <a href={item.imageUrl} target="_blank" rel="noopener noreferrer" className="block h-10 w-10">
+                                    <img className="h-10 w-10 rounded-full object-cover" src={item.imageUrl} alt="" />
+                                  </a>
                                 ) : (
                                   <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
                                     <svg className="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -562,7 +564,9 @@ const AppForSecurityGuard = ({ user }) => {
               <div className="flex items-center mb-4">
                 <div className="flex-shrink-0 h-12 w-12">
                   {selectedItem.imageUrl ? (
-                    <img className="h-12 w-12 rounded-md object-cover" src={selectedItem.imageUrl} alt="" />
+                    <a href={selectedItem.imageUrl} target="_blank" rel="noopener noreferrer" className="block h-12 w-12">
+                      <img className="h-12 w-12 rounded-md object-cover" src={selectedItem.imageUrl} alt="" />
+                    </a>
                   ) : (
                     <div className="h-12 w-12 rounded-md bg-gray-200 flex items-center justify-center">
                       <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -626,7 +630,9 @@ const AppForSecurityGuard = ({ user }) => {
               <div className="flex items-center mb-4">
                 <div className="flex-shrink-0 h-12 w-12">
                   {selectedItem.imageUrl ? (
-                    <img className="h-12 w-12 rounded-md object-cover" src={selectedItem.imageUrl} alt="" />
+                    <a href={selectedItem.imageUrl} target="_blank" rel="noopener noreferrer" className="block h-12 w-12">
+                      <img className="h-12 w-12 rounded-md object-cover" src={selectedItem.imageUrl} alt="" />
+                    </a>
                   ) : (
                     <div className="h-12 w-12 rounded-md bg-gray-200 flex items-center justify-center">
                       <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -704,11 +710,13 @@ const AppForSecurityGuard = ({ user }) => {
               {/* Image */}
               <div className="sm:w-1/3">
                 {detailItem.imageUrl ? (
-                  <img 
-                    src={detailItem.imageUrl} 
-                    alt={detailItem.title}
-                    className="w-full h-64 object-cover rounded-lg shadow-md" 
-                  />
+                  <a href={detailItem.imageUrl} target="_blank" rel="noopener noreferrer" className="block w-full">
+                    <img 
+                      src={detailItem.imageUrl} 
+                      alt={detailItem.title}
+                      className="w-full h-64 object-cover rounded-lg shadow-md hover:opacity-90 transition-opacity" 
+                    />
+                  </a>
                 ) : (
                   <div className="w-full h-64 bg-gray-200 flex items-center justify-center rounded-lg shadow-md">
                     <svg className="h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
