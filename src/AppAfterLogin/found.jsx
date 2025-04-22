@@ -90,11 +90,15 @@ const Found = ({user}) => {
             <option value="MSc 2024">MSc 2024</option>
             <option value="BSc BEd 2023">BSc BEd 2023</option>
             <option value="BSc BEd 2024">BSc BEd 2024</option>
+            <option value="PhD 2021">PhD 2018</option>
+            <option value="PhD 2022">PhD 2019</option>
+            <option value="PhD 2023">PhD 2020</option>
             <option value="PhD 2021">PhD 2021</option>
             <option value="PhD 2022">PhD 2022</option>
             <option value="PhD 2023">PhD 2023</option>
             <option value="PhD 2024">PhD 2024</option>
             <option value="Faculty">Faculty</option>
+            <option value="Staff">Staff</option>
             <option value="Others">Others</option>
           </select>
 
@@ -125,61 +129,65 @@ const Found = ({user}) => {
             <div 
               key={item.$id} 
               onClick={() => handleClick(item.$id)} 
-              className="bg-white cursor-pointer rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300"
+              className="bg-white cursor-pointer rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
             >
-              <div className="relative h-48">
+              <div className="relative h-48 group">
                 {item.imageUrl ? (
                   <img
                     src={item.imageUrl}
                     alt={item.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                    <span className="text-gray-500">Image Is Not Available or For Clue</span>
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+                    <span className="text-gray-500 text-center px-4">No Image Available</span>
                   </div>
                 )}
                 <div className="absolute top-2 right-2">
-                  <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs sm:text-sm">
+                  <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md">
                     Found
                   </span>
                 </div>
               </div>
               
-              <div className="p-3 sm:p-4">
-                <h2 className="text-lg sm:text-xl flex text-gray-800 font-medium mb-2">
-                  <span className="font-bold">Title -&nbsp;</span>
-                  <span className="truncate">{item.title}</span>
+              <div className="p-4 bg-gradient-to-br from-white to-gray-50">
+                <h2 className="text-lg font-bold text-gray-800 mb-2">
+                  {item.title}
                 </h2>
                 
-                <p className="flex text-sm sm:text-base text-gray-600 mb-2">
-                  <span className="font-bold">Color -&nbsp;</span>
-                  <span>{item.color}</span>
-                </p>
-              
-                <div className="flex flex-col sm:flex-row justify-between text-sm text-gray-800 mb-3">
-                  <span className="flex items-center mb-1 sm:mb-0">
-                    <span className="font-bold mr-1">Found at:&nbsp;</span>
-                    <span className="truncate">{item.location}</span>
-                  </span>
-                  <span className="text-gray-500 text-xs sm:text-sm">
-                    {new Date(item.$createdAt).toLocaleDateString()}
-                  </span>
+                <div className="space-y-3 mb-4">
+                  <div className="flex items-center text-gray-600">
+                    <svg className="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                    </svg>
+                    <span className="text-sm">{item.color}</span>
+                  </div>
+                  
+                  <div className="flex items-center text-gray-600">
+                    <svg className="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span className="text-sm truncate">Found at: {item.location}</span>
+                  </div>
+                  
+                  <div className="flex items-center text-gray-500">
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span className="text-xs">{new Date(item.$createdAt).toLocaleDateString()}</span>
+                  </div>
                 </div>
                 
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
-                  <span className="text-green-600 font-medium text-sm sm:text-base">
-                    Found by: {item.name}
-                  </span>
-                  <button 
-                    className="w-full sm:w-auto bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors duration-300 text-sm sm:text-base"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      window.location.href = `tel:${item.phone}`;
-                    }}
-                  >
-                    {item.phonePrivate?"Mob no private":item.phone}
-                  </button>
+                <div className="mt-auto pt-3 border-t border-gray-100">
+                  <div className="bg-green-50 border border-green-100 rounded-md p-3 text-sm text-green-800">
+                    <div className="flex items-center">
+                      <svg className="w-5 h-5 mr-2 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span>This item is collected by security guard at main gate NIT Jalandhar</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

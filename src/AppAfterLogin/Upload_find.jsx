@@ -66,7 +66,7 @@ const Upload_find = ({ user }) => {
         { ...formData, imageUrl, phone: +formData.phone, phonePrivate:isPrivate }
       );
       console.log("Document Created:", res);
-      alert("Data stored successfully!");
+      alert("Item Reported Successfully!");
       setSuccess(true);
       setFormData({
         email: user.email,
@@ -270,11 +270,15 @@ const Upload_find = ({ user }) => {
                     <option value="MSc 2024">MSc 2024</option>
                     <option value="BSc BEd 2023">BSc BEd 2023</option>
                     <option value="BSc BEd 2024">BSc BEd 2024</option>
+                    <option value="PhD 2018">PhD 2018</option>  
+                    <option value="PhD 2019">PhD 2019</option>
+                    <option value="PhD 2020">PhD 2020</option>
                     <option value="PhD 2021">PhD 2021</option>
                     <option value="PhD 2022">PhD 2022</option>
                     <option value="PhD 2023">PhD 2023</option>
                     <option value="PhD 2024">PhD 2024</option>
                     <option value="Faculty">Faculty</option>
+                    <option value="Staff">Staff</option>
                     <option value="Others">Others</option>
                   </select>
                 </div>

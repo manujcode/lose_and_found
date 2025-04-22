@@ -1,6 +1,61 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { databases } from '../appwrite';
 
 const Home = ({page, setPage}) => {
+  const [stats, setStats] = useState({
+    totalItems: 0,
+    lostItems: 0,
+    foundItems: 0,
+    successRate: '0%'
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        // Fetch lost items
+        const lostResponse = await databases.listDocuments(
+          import.meta.env.VITE_APPWRITE_DATABASE_ID,
+          import.meta.env.VITE_APPWRITE_LOST_COLLECTION_ID
+        );
+        
+        // Fetch found items
+        const foundResponse = await databases.listDocuments(
+          import.meta.env.VITE_APPWRITE_DATABASE_ID,
+          import.meta.env.VITE_APPWRITE_FOUND_COLLECTION_ID
+        );
+        
+        // Filter out disabled items
+        const activeLostItems = lostResponse.documents.filter(item => !item.Disabled && item.isActive !== false);
+        const activeFoundItems = foundResponse.documents.filter(item => !item.Disabled && item.isActive !== false);
+        // console.log('1>',activeLostItems);
+        // console.log('2>',activeFoundItems);
+        const recoveredLostItems = lostResponse.documents.filter(item => item.Disabled === true).length;
+        const claimedFoundItems = foundResponse.documents.filter(item => item.Disabled === true).length;
+        const lostItems = activeLostItems.length;
+        const foundItems = activeFoundItems.length;
+        const totalItems = lostItems + foundItems+recoveredLostItems+claimedFoundItems;
+        
+        // Calculate claimed/recovered items (only count those that were active)
+        const totalSuccessful = recoveredLostItems + claimedFoundItems;
+        // console.log('recoveredLostItems>',recoveredLostItems);
+        // console.log('claimedFoundItems>',claimedFoundItems);
+        // Calculate success rate
+        const successRate = totalItems > 0 ? Math.round((totalSuccessful / totalItems) * 100) + '%' : '0%';
+        
+        setStats({
+          totalItems,
+          lostItems,
+          foundItems,
+          successRate
+        });
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+      }
+    };
+    
+    fetchStats();
+  }, []);
+
   const MenuCard = ({ title, onClick, color, icon,backgroundImage }) => (
     <div 
       onClick={onClick}
@@ -72,10 +127,10 @@ const Home = ({page, setPage}) => {
 
         {/* Stats Section */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
-          <StatCard title="Total Items" value="124" color="text-blue-400" />
-          <StatCard title="Lost Items" value="48" color="text-red-400" />
-          <StatCard title="Found Items" value="76" color="text-green-400" />
-          <StatCard title="Success Rate" value="82%" color="text-yellow-400" />
+          <StatCard title="Total Items" value={stats.totalItems.toString()} color="text-blue-400" />
+          <StatCard title="Lost Items" value={stats.lostItems.toString()} color="text-red-400" />
+          <StatCard title="Found Items" value={stats.foundItems.toString()} color="text-green-400" />
+          <StatCard title="Success Rate" value={stats.successRate} color="text-yellow-400" />
         </div>
       </div>
     </div>
