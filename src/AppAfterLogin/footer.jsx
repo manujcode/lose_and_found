@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Footer = () => {
+const Footer = ({setPage}) => {
   return (
     <footer className="bg-gradient-to-b from-gray-900 via-gray-900 to-black text-white border-t border-gray-800">
       <div className="max-w-7xl mx-auto px-4 py-12">
@@ -66,6 +66,17 @@ const Footer = () => {
                 </a>
               </li>
               <li className="transition-transform hover:translate-x-1 duration-200">
+                <button 
+                  onClick={() => setPage(6)} 
+                  className="hover:text-purple-300 transition-colors flex items-center w-full text-left"
+                >
+                  <svg className="w-3 h-3 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                  About Us & Rules
+                </button>
+              </li>
+              <li className="transition-transform hover:translate-x-1 duration-200">
                 <a href="https://nitj.ac.in/admin/phonebook.html" className="hover:text-purple-300 transition-colors flex items-center">
                   <svg className="w-3 h-3 mr-2" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -79,14 +90,6 @@ const Footer = () => {
                     <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
                   </svg>
                   Campus Life
-                </a>
-              </li>
-              <li className="transition-transform hover:translate-x-1 duration-200">
-                <a href="https://www.nitj.ac.in/template/index.html?id=64ae4b97a5e16718759c7e9c?category=newpage" className="hover:text-purple-300 transition-colors flex items-center">
-                  <svg className="w-3 h-3 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
-                  Rules & Policies
                 </a>
               </li>
             </ul>

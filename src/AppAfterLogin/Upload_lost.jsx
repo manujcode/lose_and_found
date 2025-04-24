@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { databases, storage } from '../appwrite'
 import { ID } from 'appwrite'
 
-const Upload_find = ({ user }) => {
+const Upload_lost = ({ user, setPage }) => {
   const [formData, setFormData] = useState({
     email: user.email,
     name: user.name,
@@ -142,6 +142,19 @@ const Upload_find = ({ user }) => {
 
             <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 marquee" role="alert">
               <p className="font-bold inline-block">Disclaimer: If you upload fake information or break any rules, strict action will be taken.</p>
+            </div>
+            
+            <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-6">
+              <p className="text-sm">
+                Please make sure to read our 
+                <button 
+                  onClick={() => setPage(6)} 
+                  className="font-semibold text-blue-600 hover:text-blue-800 ml-1 underline focus:outline-none"
+                >
+                  About Us & Rules
+                </button> 
+                before submitting a report.
+              </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
@@ -427,7 +440,7 @@ const Upload_find = ({ user }) => {
   );
 }
 
-export default Upload_find;
+export default Upload_lost;
 
 <style jsx>{`
   .marquee {
