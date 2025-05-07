@@ -148,7 +148,10 @@ const Upload_lost = ({ user, setPage }) => {
               <p className="text-sm">
                 Please make sure to read our 
                 <button 
-                  onClick={() => setPage(6)} 
+                  onClick={() => {
+                    setPage(6);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }} 
                   className="font-semibold text-blue-600 hover:text-blue-800 ml-1 underline focus:outline-none"
                 >
                   About Us & Rules

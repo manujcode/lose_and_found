@@ -61,7 +61,9 @@ const AppForSecurityGuard = ({ user }) => {
     try {
       const updateData = {
         owner_received: false,
-        guard_remarks: reverseOwnerReason
+        guard_remarks: reverseOwnerReason,
+        lastupdatebyemail: user.email,
+        lastupdatebyname: user.name
       };
       
       await databases.updateDocument(
@@ -98,6 +100,8 @@ const AppForSecurityGuard = ({ user }) => {
           updateData = {
             // isActive: true,
             Disabled: false,
+            lastupdatebyemail: user.email,
+            lastupdatebyname: user.name
             // Disabled_reason: '',
             // statusChangedBy: user.email,
             // statusChangedAt: new Date().toISOString()
@@ -110,6 +114,8 @@ const AppForSecurityGuard = ({ user }) => {
           const newGuardReceivedValue = !(item.guard_received === true);
           updateData = {
             guard_received: newGuardReceivedValue,
+            lastupdatebyemail: user.email,
+            lastupdatebyname: user.name
             // guard_received_notes: newGuardReceivedValue 
             //   ? `Item stored by ${user.email} on ${new Date().toLocaleString()}` 
             //   : `Item storage status reversed by ${user.email} on ${new Date().toLocaleString()}`
@@ -128,6 +134,8 @@ const AppForSecurityGuard = ({ user }) => {
             // Disabled_reason: `Disabled by ${user.email} on ${new Date().toLocaleString()}`,
             // statusChangedBy: user.email,
             // statusChangedAt: new Date().toISOString()
+            lastupdatebyemail: user.email,
+            lastupdatebyname: user.name
           };
           successMessage = newDisabledValue 
             ? 'Item disabled successfully!' 
@@ -163,6 +171,8 @@ const AppForSecurityGuard = ({ user }) => {
         owner_received: true,
         // owner_received_at: new Date().toISOString(),
         // owner_received_by: user.email,
+        lastupdatebyemail: user.email,
+        lastupdatebyname: user.name,
         guard_remarks: ownerReceivedDetails
       };
       
@@ -183,10 +193,10 @@ const AppForSecurityGuard = ({ user }) => {
       setShowOwnerReceivedModal(false);
       setOwnerReceivedDetails('');
       setSelectedItem(null);
-      alert('Item marked as received by owner successfully!');
+      alert('Item marked as received from owner successfully!');
     } catch (error) {
       console.error('Error updating owner received status:', error);
-      alert(`Failed to mark as received by owner. Please try again.`);
+      alert(`Failed to mark as received from owner. Please try again.`);
     }
   };
 
@@ -244,7 +254,7 @@ const AppForSecurityGuard = ({ user }) => {
 
   const getItemStatus = (item) => {
     if (item.owner_received) return 'Owner Received';
-    if (item.guard_received) return 'Guard Received';
+    if (item.guard_received) return 'Security cell Received';
     if (item.isActive === false || item.Disabled === true) return 'Disabled';
     return 'Active';
   };
@@ -279,7 +289,7 @@ const AppForSecurityGuard = ({ user }) => {
     <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="pb-5 border-b border-gray-200 mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Security Guard Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Security cell Dashboard</h1>
           <p className="mt-2 text-sm text-gray-500">
             Manage found items by updating their status as needed.
           </p>
@@ -312,7 +322,7 @@ const AppForSecurityGuard = ({ user }) => {
               <option value="all">All Items</option>
               <option value="active">Active Items</option>
               <option value="disabled">Disabled Items</option>
-              <option value="guard_received">Guard Received Items</option>
+              <option value="guard_received">Security cell Received Items</option>
               <option value="owner_received">Owner Received Items</option>
             </select>
           </div>
@@ -343,7 +353,7 @@ const AppForSecurityGuard = ({ user }) => {
           <div className="bg-white overflow-hidden shadow rounded-lg">
             <div className="px-4 py-5 sm:p-6">
               <dt className="text-sm font-medium text-gray-500 truncate">
-                Guard Received
+              Security cell Received
               </dt>
               <dd className="mt-1 text-3xl font-semibold text-blue-600">
                 {items.filter(item => item.guard_received === true).length}
@@ -463,7 +473,7 @@ const AppForSecurityGuard = ({ user }) => {
                                         ? 'bg-green-100 text-purple-800 border-green-200 hover:bg-purple-50' 
                                         : 'text-white bg-purple-600 hover:bg-purple-700 border-transparent focus:ring-purple-500'}`}
                                     >
-                                      <StatusCheckbox isChecked={item.owner_received} label={item.owner_received ? "Undo Owner Receipt" : "Owner Received"} />
+                                      <StatusCheckbox isChecked={item.owner_received} label={item.owner_received ? "Undo Received from Owner" : "Received from Owner"} />
                                     </button>
                                   )}
                                 </>
@@ -558,7 +568,7 @@ const AppForSecurityGuard = ({ user }) => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
             <h2 className="text-xl font-semibold mb-4">
-              Mark Item as Received by Owner
+              Mark Item as Received from Owner
             </h2>
             <div className="mb-4">
               <div className="flex items-center mb-4">
@@ -795,6 +805,25 @@ const AppForSecurityGuard = ({ user }) => {
                   </div>
                 </div>
                 
+                {/* Last Updated By */}
+                <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                  <h4 className="text-sm font-semibold text-gray-800 mb-2">Last Updated By</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <div className="text-xs font-medium text-gray-500">Email</div>
+                      <div className="text-sm text-gray-900">{detailItem.lastUpdatedByEmail || detailItem.email}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs font-medium text-gray-500">Name</div>
+                      <div className="text-sm text-gray-900">{detailItem.lastUpdatedByName || detailItem.name }</div>
+                    </div>
+                    <div>
+                      <div className="text-xs font-medium text-gray-500">Last Updated Time</div>
+                      <div className="text-sm text-gray-900">{ new  Date( detailItem.$updatedAt ).toLocaleString() || 'Not provided'}</div>
+                    </div>
+                  </div>
+                </div>
+                
                 {/* Status Timeline */}
                 <div className="mb-4 pt-4 border-t border-gray-200">
                   <h4 className="text-md font-semibold mb-2">Status Timeline</h4>
@@ -875,7 +904,7 @@ const AppForSecurityGuard = ({ user }) => {
                 {/* Guard Remarks */}
                 {detailItem.guard_remarks && (
                   <div className="mb-4 pt-4 border-t border-gray-200">
-                    <div className="text-sm font-medium text-gray-500 mb-1">Guard Remarks</div>
+                    <div className="text-sm font-medium text-gray-500 mb-1">Security cell Remarks</div>
                     <div className="text-sm text-gray-900 bg-gray-50 p-3 rounded-md border border-gray-200">
                       {detailItem.guard_remarks}
                     </div>

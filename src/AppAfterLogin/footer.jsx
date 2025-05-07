@@ -67,7 +67,10 @@ const Footer = ({setPage}) => {
               </li>
               <li className="transition-transform hover:translate-x-1 duration-200">
                 <button 
-                  onClick={() => setPage(6)} 
+                  onClick={() => {
+                    setPage(6);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }} 
                   className="hover:text-purple-300 transition-colors flex items-center w-full text-left"
                 >
                   <svg className="w-3 h-3 mr-2" fill="currentColor" viewBox="0 0 20 20">

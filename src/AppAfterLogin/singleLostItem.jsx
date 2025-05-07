@@ -172,10 +172,10 @@ const SingleLostItem = ({user ,id,setSelectedItem}) => {
                 </div>
 
                 <div className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
-                  <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+                  <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
                     Contact Information
                   </h2>
-                  <div className="bg-gray-50 rounded-lg p-4">
+                  <div className="bg-gray-50 rounded-lg p-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
                         <div className="flex-shrink-0">
@@ -183,20 +183,20 @@ const SingleLostItem = ({user ,id,setSelectedItem}) => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                           </svg>
                         </div>
-                        <div className="ml-3">
+                        <div className="ml-2">
                           <p className="text-sm font-medium text-gray-900">{item.name}</p>
                           <p className="text-sm text-gray-500">{item.email}</p>
                         </div>
                       </div>
                       {!item.phonePrivate && item.phone !== 1000000000 && (
                         <button 
-                          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"
+                          className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"
                           onClick={(e) => {
                             e.stopPropagation();
                             window.location.href = `tel:${item.phone}`;
                           }}
                         >
-                          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                           </svg>
                           {item.phone}
