@@ -18,7 +18,28 @@ const Found = ({user}) => {
         const response = await databases.listDocuments(
           import.meta.env.VITE_APPWRITE_DATABASE_ID,
           import.meta.env.VITE_APPWRITE_FOUND_COLLECTION_ID,
-          [Query.orderDesc('$createdAt')]
+          [Query.orderDesc('$createdAt'),
+            Query.select(['$id', "title",
+              "description",
+              "location",
+              "color",
+              "imageUrl",
+              "tags",
+              "course",
+              "phonePrivate",
+              "Requested",
+              "Disabled_reason",
+              "Disabled",
+              "guard_received",
+              "owner_received",
+              "guard_remarks",
+              "lastupdatebyemail",
+              "lastupdatebyname",
+              "$createdAt",
+              "$updatedAt"
+
+          ])
+          ]
         );
         // Filter out disabled items
         const activeItems = response.documents.filter(item => !item.Disabled);

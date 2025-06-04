@@ -16,13 +16,58 @@ const Lost = ({user}) => {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await databases.listDocuments(
+        const test1 = await databases.listDocuments(
           import.meta.env.VITE_APPWRITE_DATABASE_ID,
           import.meta.env.VITE_APPWRITE_LOST_COLLECTION_ID,
-          [Query.orderDesc('$createdAt')]
+          [
+            Query.equal("phonePrivate", false),
+            Query.select(['$id', "email",
+              "name",
+              "phone",
+              "description",
+              "title",
+              "location",
+              "color",
+              "tags",
+              "imageUrl",
+              "course",
+              "phonePrivate",
+              "Disabled",
+              "Disabled_reason",
+              "$createdAt",
+              "$updatedAt",
+              
+          ])]
         );
+
+        const test2 = await databases.listDocuments(
+          import.meta.env.VITE_APPWRITE_DATABASE_ID,
+          import.meta.env.VITE_APPWRITE_LOST_COLLECTION_ID,
+          [Query.equal("phonePrivate", true),
+            Query.select(['$id', "email",
+              "name",
+              "description",
+              "title",
+              "location",
+              "color",
+              "tags",
+              "imageUrl",
+              "course",
+              "phonePrivate",
+              "Disabled",
+              "Disabled_reason",
+              "$createdAt",
+              "$updatedAt",
+              
+          ])]
+        );
+
+        const response = [...test1.documents, ...test2.documents];
+        console.log(response);
+
+
         // Filter out disabled items
-        const activeItems = response.documents.filter(item => !item.Disabled);
+        const activeItems = response.filter(item => !item.Disabled);
         setItems(activeItems);
         setLoading(false);
       } catch (error) {

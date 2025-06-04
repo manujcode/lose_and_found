@@ -211,7 +211,7 @@ const MyUploads = ({ user }) => {
                   key={item.$id}
                   className={`bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer 
                     ${isLost && item.Disabled ? 'opacity-60' : ''}`}
-                  onClick={() => navigate(`/${isLost ? 'lost' : 'found'}/${item.$id}`)}
+                  // onClick={() => navigate(`/${isLost ? 'lost' : 'found'}/${item.$id}`)}
                 >
                   <div className="relative h-48">
                     {item.imageUrl ? (

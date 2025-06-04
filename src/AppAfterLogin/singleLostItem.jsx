@@ -19,12 +19,57 @@ const SingleLostItem = ({user ,id,setSelectedItem}) => {
   useEffect(() => {
     const fetchItem = async () => {
       try {
-        const response = await databases.getDocument(
+        const test1 = await databases.listDocuments(
           import.meta.env.VITE_APPWRITE_DATABASE_ID,
           import.meta.env.VITE_APPWRITE_LOST_COLLECTION_ID,
-          id
+          [ Query.equal("$id", id),
+            Query.equal("phonePrivate", false),
+            Query.select(['$id', "email",
+              "name",
+              "phone",
+              "description",
+              "title",
+              "location",
+              "color",
+              "tags",
+              "imageUrl",
+              "course",
+              "phonePrivate",
+              "Disabled",
+              "Disabled_reason",
+              "$createdAt",
+              "$updatedAt",
+              
+          ])]
         );
-        setItem(response);
+
+        const test2 = await databases.listDocuments(
+          import.meta.env.VITE_APPWRITE_DATABASE_ID,
+          import.meta.env.VITE_APPWRITE_LOST_COLLECTION_ID,
+          [ Query.equal("$id", id),
+            Query.equal("phonePrivate", true),
+            Query.select(['$id', "email",
+              "name",
+              "description",
+              "title",
+              "location",
+              "color",
+              "tags",
+              "imageUrl",
+              "course",
+              "phonePrivate",
+              "Disabled",
+              "Disabled_reason",
+              "$createdAt",
+              "$updatedAt",
+              
+          ])]
+        );
+
+        const response = [...test1.documents, ...test2.documents];
+        console.log(response);
+
+        setItem(...response);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching item:', error);

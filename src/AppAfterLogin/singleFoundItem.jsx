@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { databases } from '../appwrite';
 import { ID } from 'appwrite'
+import { Query } from 'appwrite';
 
 const getInitials = (name) => {
   return name
@@ -204,10 +205,31 @@ const SingleFoundItem = ({user,id, setSelectedItem}) => {
   useEffect(() => {
     const fetchItem = async () => {
       try {
-        const response = await databases.getDocument(
+        const response = await databases.listDocuments(
           import.meta.env.VITE_APPWRITE_DATABASE_ID,
           import.meta.env.VITE_APPWRITE_FOUND_COLLECTION_ID,
-          id
+          [Query.equal("$id", id),
+          Query.select(['$id', "title",
+              "description",
+              "location",
+              "color",
+              "imageUrl",
+              "tags",
+              "course",
+              "phonePrivate",
+              "Requested",
+              "Disabled_reason",
+              "Disabled",
+              "guard_received",
+              "owner_received",
+              "guard_remarks",
+              "lastupdatebyemail",
+              "lastupdatebyname",
+              "$createdAt",
+              "$updatedAt"
+
+          ])]
+        
         );
         setItem(response);
         setLoading(false);
