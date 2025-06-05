@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { databases } from '../appwrite';
+import { Link } from 'react-router-dom';
 
 const Home = ({page, setPage}) => {
   const [stats, setStats] = useState({
@@ -56,9 +57,9 @@ const Home = ({page, setPage}) => {
     fetchStats();
   }, []);
 
-  const MenuCard = ({ title, onClick, color, icon,backgroundImage }) => (
-    <div 
-      onClick={onClick}
+  const MenuCard = ({ title, to, color, icon, backgroundImage }) => (
+    <Link 
+      to={to}
       className={`${color} w-full rounded-2xl shadow-2xl transform transition-all duration-300 
         hover:scale-105 hover:shadow-3xl cursor-pointer overflow-hidden group`}
         style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
@@ -71,7 +72,7 @@ const Home = ({page, setPage}) => {
           <div className="w-12 sm:w-16 h-1 bg-white rounded-full transform origin-left group-hover:scale-x-150 transition-transform"></div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 
   const StatCard = ({ title, value, color,backgroundImage }) => (
@@ -97,28 +98,28 @@ const Home = ({page, setPage}) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8 mb-12 sm:mb-16">
           <MenuCard 
             title="Lost Items"
-            onClick={() => setPage(2)}
+            to="/dashboard/lost"
             color="bg-gradient-to-br from-red-500 to-red-700"
             icon=""
             backgroundImage ="/woman-8473560_1280.webp"
           />
           <MenuCard 
             title="Found Items"
-            onClick={() => setPage(1)}
+            to="/dashboard/found"
             color="bg-gradient-to-br from-green-500 to-green-700"
             icon=""
             backgroundImage = "/9886321.jpg"
           />
             <MenuCard 
               title="Report Lost"
-              onClick={() => setPage(4)}
+              to="/dashboard/upload-lost"
               color="bg-gradient-to-br from-purple-500 to-purple-700"
               icon=""
               backgroundImage = "/image.png"
             />
           <MenuCard 
             title="Report Found"
-            onClick={() => setPage(3)}
+            to="/dashboard/upload-found"
             color="bg-gradient-to-br from-blue-500 to-blue-700"
             icon=""
             backgroundImage ="/investigation-report-1024x683.png"
