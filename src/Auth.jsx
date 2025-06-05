@@ -19,8 +19,9 @@ const Auth = ({ user, setUser }) => {
     checkUser();
   }, []);
 
+  // In Auth.jsx, update the redirect after successful login
   if (user) {
-    return <MainPage user={user} setUser={setUser} />;
+    return <Navigate to="/dashboard" />;
   }
 
   return (

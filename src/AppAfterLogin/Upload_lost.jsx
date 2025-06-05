@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { databases, storage } from '../appwrite'
 import { ID } from 'appwrite'
+import { Link } from 'react-router-dom'; // Import Link
 
 const Upload_lost = ({ user, setPage }) => {
   const [formData, setFormData] = useState({
@@ -147,15 +148,12 @@ const Upload_lost = ({ user, setPage }) => {
             <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-6">
               <p className="text-sm">
                 Please make sure to read our 
-                <button 
-                  onClick={() => {
-                    setPage(6);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }} 
+                <Link 
+                  to="/dashboard/about" // Use Link to navigate to the About Us page
                   className="font-semibold text-blue-600 hover:text-blue-800 ml-1 underline focus:outline-none"
                 >
                   About Us & Rules
-                </button> 
+                </Link> 
                 before submitting a report.
               </p>
             </div>

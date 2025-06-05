@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { logoutUser } from '../auth';
-import { Navigate, useNavigate, Link } from 'react-router-dom';
+import { Navigate, useNavigate, Link, useLocation } from 'react-router-dom';
 import { Client, Databases, Query } from 'appwrite';
-// import { Navigate } from 'react-router-dom';
 
 // List of admin emails who can access the admin dashboard
 // In a real application, this should come from a secure source like environment variables
@@ -15,23 +14,15 @@ const ADMIN_EMAILS = [
   // Add more admin emails as needed
 ];
 
-// Remove hardcoded security emails since we'll check the database
-// const SECURITY_EMAILS = [
-//   'manujg.it.21@nitj.ac.in',
-//   'guard@nitj.ac.in',
-//   // Add security guard emails here
-// ];
-
-const Navbar = ({page,setPage,user,setUser}) => {
+const Navbar = ({user, setUser}) => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [isSecurityGuard, setIsSecurityGuard] = useState(false);
     const [securityCheckComplete, setSecurityCheckComplete] = useState(false);
     const dropdownRef = useRef(null);
     const navigate = useNavigate();
+    const location = useLocation();
     const isAdmin = user && ADMIN_EMAILS.includes(user.email);
-    // Remove the hardcoded security check
-    // const isSecurityGuard = user && (SECURITY_EMAILS.includes(user.email) || user.email.includes('security') || user.email.includes('guard'));
    
     useEffect(() => {
       const handleClickOutside = (event) => {
@@ -97,33 +88,20 @@ const Navbar = ({page,setPage,user,setUser}) => {
         }
     };
 
-    const handleAdminClick = () => {
-        navigate('/admin');
-    };
-
-    const handleSecurityClick = () => {
-        navigate('/security');
-    };
-
-    console.log(user,"nknknknk user")
     const toggleDropdown = () => {
         setDropdownOpen(!dropdownOpen);
     }; 
 
-    const handleClick = () => {
-        setPage(0); // Navigate to home page
-    };
-
-    const NavButton = ({ onClick, isActive, children }) => (
-        <button
-            onClick={onClick}
+    const NavLink = ({ to, children }) => (
+        <Link
+            to={to}
             className={`px-4 py-2 rounded-lg transition-all duration-200 font-semibold
-                ${isActive 
+                ${location.pathname === to 
                     ? 'bg-blue-600 text-white shadow-lg' 
                     : 'text-gray-300 hover:bg-gray-700/50 hover:text-white'}`}
         >
             {children}
-        </button>
+        </Link>
     );
 
     // If security check is not complete, we could show a loading indicator
@@ -136,8 +114,8 @@ const Navbar = ({page,setPage,user,setUser}) => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
                         {/* Logo and Title */}
-                        <div 
-                            onClick={handleClick} 
+                        <Link 
+                            to="/dashboard"
                             className="flex items-center space-x-4 cursor-pointer hover:opacity-80 transition-opacity duration-200"
                         >
                             <img 
@@ -150,34 +128,34 @@ const Navbar = ({page,setPage,user,setUser}) => {
                                 <span className="text-white mx-2">-</span>
                                 <span className="text-green-500">Lost & Found</span>
                             </div>
-                        </div>
+                        </Link>
 
                         {/* Desktop Navigation */}
                         <div className="hidden md:flex items-center space-x-4">
-                            <NavButton onClick={() => setPage(0)} isActive={page === 0}>
+                            <NavLink to="/dashboard">
                                 Home
-                            </NavButton>
-                            <NavButton onClick={() => setPage(2)} isActive={page === 2}>
+                            </NavLink>
+                            <NavLink to="/dashboard/lost">
                                 Lost Items
-                            </NavButton>
-                            <NavButton onClick={() => setPage(1)} isActive={page === 1}>
+                            </NavLink>
+                            <NavLink to="/dashboard/found">
                                 Found Items
-                            </NavButton>
-                            <NavButton onClick={() => setPage(4)} isActive={page === 4}>
+                            </NavLink>
+                            <NavLink to="/dashboard/upload-lost">
                                 Report Lost
-                            </NavButton>
-                            <NavButton onClick={() => setPage(3)} isActive={page === 3}>
+                            </NavLink>
+                            <NavLink to="/dashboard/upload-found">
                                 Report Found
-                            </NavButton>
-                            <Link
-                                to="/my-uploads"
-                                className="text-white hover:text-red-500 transition-colors duration-200"
-                            >
+                            </NavLink>
+                            <NavLink to="/dashboard/my-uploads">
                                 My Dashboard
-                            </Link>
+                            </NavLink>
                             
                             {isAdmin && (
-                                <NavButton onClick={handleAdminClick} isActive={false}>
+                                <Link
+                                    to="/admin"
+                                    className="px-4 py-2 rounded-lg transition-all duration-200 font-semibold text-gray-300 hover:bg-gray-700/50 hover:text-white"
+                                >
                                     <span className="flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -185,11 +163,14 @@ const Navbar = ({page,setPage,user,setUser}) => {
                                         </svg>
                                         Admin
                                     </span>
-                                </NavButton>
+                                </Link>
                             )}
 
                             {securityCheckComplete && isSecurityGuard && (
-                                <NavButton onClick={handleSecurityClick} isActive={false}>
+                                <Link
+                                    to="/security"
+                                    className="px-4 py-2 rounded-lg transition-all duration-200 font-semibold text-gray-300 hover:bg-gray-700/50 hover:text-white"
+                                >
                                     <span className="flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -197,7 +178,7 @@ const Navbar = ({page,setPage,user,setUser}) => {
                                         </svg>
                                         Security
                                     </span>
-                                </NavButton>
+                                </Link>
                             )}
 
                             {/* Profile Dropdown */}
@@ -250,29 +231,27 @@ const Navbar = ({page,setPage,user,setUser}) => {
                     <div className="md:hidden">
                         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                             {[
-                                { text: 'Home', onClick: () => setPage(0), active: page === 0 },
-                                { text: 'Lost Items', onClick: () => setPage(2), active: page === 2 },
-                                { text: 'Found Items', onClick: () => setPage(1), active: page === 1 },
-                                { text: 'Report Lost', onClick: () => setPage(4), active: page === 4 },
-                                { text: 'Report Found', onClick: () => setPage(3), active: page === 3 },
-                                { text: 'My Dashboard', onClick: () => setPage(5), active: page === 5 },
-                                ...(isAdmin ? [{ text: 'Admin Dashboard', onClick: handleAdminClick, active: false }] : []),
-                                ...(securityCheckComplete && isSecurityGuard ? [{ text: 'Security Dashboard', onClick: handleSecurityClick, active: false }] : []),
+                                { text: 'Home', to: '/dashboard', active: location.pathname === '/dashboard' },
+                                { text: 'Lost Items', to: '/dashboard/lost', active: location.pathname === '/dashboard/lost' },
+                                { text: 'Found Items', to: '/dashboard/found', active: location.pathname === '/dashboard/found' },
+                                { text: 'Report Lost', to: '/dashboard/upload-lost', active: location.pathname === '/dashboard/upload-lost' },
+                                { text: 'Report Found', to: '/dashboard/upload-found', active: location.pathname === '/dashboard/upload-found' },
+                                { text: 'My Dashboard', to: '/dashboard/my-uploads', active: location.pathname === '/dashboard/my-uploads' },
+                                ...(isAdmin ? [{ text: 'Admin Dashboard', to: '/admin', active: location.pathname === '/admin' }] : []),
+                                ...(securityCheckComplete && isSecurityGuard ? [{ text: 'Security Dashboard', to: '/security', active: location.pathname === '/security' }] : []),
                             ].map((item) => (
-                                <button
+                                <Link
                                     key={item.text}
-                                    onClick={() => {
-                                        item.onClick();
-                                        setMobileMenuOpen(false);
-                                    }}
-                                    className={`w-full text-left px-3 py-2 rounded-md text-base font-medium ${
+                                    to={item.to}
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium ${
                                         item.active
                                             ? 'bg-blue-600 text-white'
                                             : 'text-gray-300 hover:bg-gray-700 hover:text-white'
                                     }`}
                                 >
                                     {item.text}
-                                </button>
+                                </Link>
                             ))}
                             <div className="border-t border-gray-700 pt-4 pb-3">
                                 <div className="px-3">
