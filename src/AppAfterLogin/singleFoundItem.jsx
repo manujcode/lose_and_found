@@ -231,7 +231,7 @@ const SingleFoundItem = ({user,id, setSelectedItem}) => {
           ])]
         
         );
-        setItem(response);
+        setItem(response.documents[0]);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching item:', error);
